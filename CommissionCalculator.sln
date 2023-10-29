@@ -1,0 +1,22 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CommissionCalculator", "CommissionCalculator\CommissionCalculator.csproj", "{CACEA457-209D-4345-971F-F5A602CFCD27}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CommissionCalculatorTests", "CommissionCalculatorTests\CommissionCalculatorTests.csproj", "{2C1683D9-1F0C-4370-951E-A0C8376DD8A7}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{CACEA457-209D-4345-971F-F5A602CFCD27}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{CACEA457-209D-4345-971F-F5A602CFCD27}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{CACEA457-209D-4345-971F-F5A602CFCD27}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{CACEA457-209D-4345-971F-F5A602CFCD27}.Release|Any CPU.Build.0 = Release|Any CPU
+		{2C1683D9-1F0C-4370-951E-A0C8376DD8A7}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{2C1683D9-1F0C-4370-951E-A0C8376DD8A7}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{2C1683D9-1F0C-4370-951E-A0C8376DD8A7}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{2C1683D9-1F0C-4370-951E-A0C8376DD8A7}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+EndGlobal
