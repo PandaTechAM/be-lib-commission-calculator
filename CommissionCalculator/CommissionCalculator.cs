@@ -6,11 +6,7 @@ public class CommissionCalculator
 
     static CommissionCalculator()
     {
-        DecimalEpsilon = 1M;
-        for (var i = 0; i < 28; i++)
-        {
-            DecimalEpsilon /= 10;
-        }
+        DecimalEpsilon = 1e-28m;
     }
 
     public static decimal ComputeCommission(decimal principalAmount, List<CommissionRule> rules,
@@ -110,6 +106,20 @@ public class CommissionCalculator
                 "For 'Percentage' CommissionType, the CommissionAmount should be between -1 and 1.");
         }
 
+        var duplicates = rules.GroupBy(r => r.RangeStart).Where(g => g.Count() > 1).ToList();
+        
+        if (duplicates.Any())
+        {
+            throw new InvalidOperationException(
+                $"There are duplicate rules with the same 'From' value: {string.Join(", ", duplicates.Select(d => d.Key))}.");
+        }
+
+        if (!rules.All(checking => checking.RangeStart == 0 || rules.Any(r => r.RangeEnd == checking.RangeStart) ))
+        {
+            throw new InvalidOperationException(
+                "There are rules with nested ranges. Please check the rules.");
+        }
+        
         var startRule = rules.FirstOrDefault(r => r.RangeStart == 0 && r.RangeEnd != 0);
         if (startRule == null)
         {

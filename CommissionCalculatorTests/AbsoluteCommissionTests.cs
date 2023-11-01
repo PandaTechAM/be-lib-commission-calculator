@@ -20,6 +20,11 @@ public class AbsoluteCommissionTests
         {
             new CommissionRule
             {
+                RangeStart = 10000, RangeEnd = 0, Type = CommissionType.FlatRate, CommissionAmount = 2000,
+                MinCommission = 0, MaxCommission = 0
+            },
+            new CommissionRule
+            {
                 RangeStart = 0, RangeEnd = 500, Type = CommissionType.FlatRate, CommissionAmount = 25,
                 MinCommission = 0, MaxCommission = 0
             },
@@ -33,11 +38,7 @@ public class AbsoluteCommissionTests
                 RangeStart = 1000, RangeEnd = 10000, Type = CommissionType.Percentage, CommissionAmount = 0.2m,
                 MinCommission = 250, MaxCommission = 1500
             },
-            new CommissionRule
-            {
-                RangeStart = 10000, RangeEnd = 0, Type = CommissionType.FlatRate, CommissionAmount = 2000,
-                MinCommission = 0, MaxCommission = 0
-            }
+
         };
 
         var commission = CommissionCalculator.CommissionCalculator.ComputeCommission(principal, rules, false, 0);
