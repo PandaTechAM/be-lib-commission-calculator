@@ -4,20 +4,20 @@
         <TargetFramework>net7.0</TargetFramework>
         <ImplicitUsings>enable</ImplicitUsings>
         <Nullable>enable</Nullable>
-        <Version>1.0.2</Version>
+        <Version>1.0.3</Version>
         <Title>Pandatech.CommissionCalculator</Title>
         <Authors>Pandatech</Authors>
         <PackageIcon>pandatech.png</PackageIcon>
         <PackageReadmeFile>Readme.md</PackageReadmeFile>
         <Description>PandaTech.CommissionCalculator is a .NET library simplifying common fintech commission calculations.</Description>
         <RepositoryUrl>https://github.com/PandaTechAM/be-lib-commission-calculator.git</RepositoryUrl>
-        <PackageReleaseNotes>Initialized project</PackageReleaseNotes>
+        <PackageReleaseNotes>Optimized and fixed bugs</PackageReleaseNotes>
         <PackageId>Pandatech.CommissionCalculator</PackageId>
     </PropertyGroup>
     <ItemGroup>
         <None Update="pandatech.png">
             <Pack>True</Pack>
-            <PackagePath></PackagePath>
+            <PackagePath>\</PackagePath>
         </None>
         <None Update="Readme.md">
             <Pack>True</Pack>

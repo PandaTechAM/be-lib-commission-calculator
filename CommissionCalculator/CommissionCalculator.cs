@@ -3,7 +3,7 @@
 public static class CommissionCalculator
 {
     private const decimal DecimalEpsilon = 1e-28M; //smallest decimal value that is greater than zero
-    
+
     public static decimal ComputeCommission(decimal principalAmount, List<CommissionRule> rules,
         bool isProportional, int decimalPlaces = 4)
     {
@@ -101,25 +101,13 @@ public static class CommissionCalculator
                 "For 'Percentage' CommissionType, the CommissionAmount should be between -1 and 1.");
         }
 
-        var duplicates = rules.GroupBy(r => r.RangeStart).Where(g => g.Count() > 1).ToList();
-        
-        if (duplicates.Any())
-        {
-            throw new InvalidOperationException(
-                $"There are duplicate rules with the same 'From' value: {string.Join(", ", duplicates.Select(d => d.Key))}.");
-        }
-
-        if (!rules.All(checking => checking.RangeStart == 0 || rules.Any(r => r.RangeEnd == checking.RangeStart) ))
-        {
-            throw new InvalidOperationException(
-                "There are rules with nested ranges. Please check the rules.");
-        }
-        
         var startRule = rules.FirstOrDefault(r => r.RangeStart == 0 && r.RangeEnd != 0);
         if (startRule == null)
         {
             throw new InvalidOperationException("There should be at least one rule where From = 0.");
         }
+
+        var verifiedRules = 1;
 
         var lastTo = startRule.RangeEnd;
 
@@ -140,8 +128,13 @@ public static class CommissionCalculator
             {
                 break;
             }
+            verifiedRules++;
 
             lastTo = nextRule!.RangeEnd;
+        }
+        if(verifiedRules != rules.Count)
+        {
+            throw new InvalidOperationException("There is some nested or gap ranges in the rules.");
         }
     }
 }
