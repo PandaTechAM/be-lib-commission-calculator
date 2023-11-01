@@ -1,14 +1,9 @@
 ﻿namespace CommissionCalculator;
 
-public class CommissionCalculator
+public static class CommissionCalculator
 {
-    private static readonly decimal DecimalEpsilon; //smallest decimal value that is greater than zero
-
-    static CommissionCalculator()
-    {
-        DecimalEpsilon = 1e-28m;
-    }
-
+    private const decimal DecimalEpsilon = 1e-28M; //smallest decimal value that is greater than zero
+    
     public static decimal ComputeCommission(decimal principalAmount, List<CommissionRule> rules,
         bool isProportional, int decimalPlaces = 4)
     {
