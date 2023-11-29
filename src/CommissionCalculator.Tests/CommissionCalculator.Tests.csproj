@@ -23,7 +23,7 @@
     </ItemGroup>
 
     <ItemGroup>
-      <ProjectReference Include="..\..\src\CommissionCalculator\CommissionCalculator.csproj" />
+      <ProjectReference Include="..\CommissionCalculator\CommissionCalculator.csproj" />
     </ItemGroup>
-
+    
 </Project>

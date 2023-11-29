@@ -1,6 +1,6 @@
 using CommissionCalculator;
 
-namespace CommissionCalculatorTests;
+namespace CommissionCalculator.Tests;
 
 public class InvalidRulesTests
 {
@@ -38,7 +38,7 @@ public class InvalidRulesTests
             }
         };
 
-        Assert.Throws<InvalidOperationException>(() => CommissionCalculator.CommissionCalculator.ValidateCommissionRules(rules));
+        Assert.Throws<InvalidOperationException>(() => CommissionCalculator.ValidateCommissionRules(rules));
     }
     
     [Fact]
@@ -75,7 +75,7 @@ public class InvalidRulesTests
             }
         };
 
-        Assert.Throws<InvalidOperationException>(() => CommissionCalculator.CommissionCalculator.ValidateCommissionRules(rules));
+        Assert.Throws<InvalidOperationException>(() => CommissionCalculator.ValidateCommissionRules(rules));
     }
     
     [Fact]
@@ -112,7 +112,7 @@ public class InvalidRulesTests
             }
         };
 
-        Assert.Throws<InvalidOperationException>(() => CommissionCalculator.CommissionCalculator.ValidateCommissionRules(rules));
+        Assert.Throws<InvalidOperationException>(() => CommissionCalculator.ValidateCommissionRules(rules));
     }
 
     
@@ -150,7 +150,7 @@ public class InvalidRulesTests
             }
         };
 
-        Assert.Throws<InvalidOperationException>(() => CommissionCalculator.CommissionCalculator.ValidateCommissionRules(rules));
+        Assert.Throws<InvalidOperationException>(() => CommissionCalculator.ValidateCommissionRules(rules));
     }
     
     [Fact]
@@ -187,7 +187,7 @@ public class InvalidRulesTests
             }
         };
 
-        Assert.Throws<InvalidOperationException>(() => CommissionCalculator.CommissionCalculator.ValidateCommissionRules(rules));
+        Assert.Throws<InvalidOperationException>(() => CommissionCalculator.ValidateCommissionRules(rules));
     }
     
     [Fact]
@@ -224,7 +224,7 @@ public class InvalidRulesTests
             }
         };
 
-        Assert.Throws<InvalidOperationException>(() => CommissionCalculator.CommissionCalculator.ValidateCommissionRules(rules));
+        Assert.Throws<InvalidOperationException>(() => CommissionCalculator.ValidateCommissionRules(rules));
     }
     
     [Fact]
@@ -270,7 +270,7 @@ public class InvalidRulesTests
             }
         };
 
-        Assert.Throws<InvalidOperationException>(() => CommissionCalculator.CommissionCalculator.ValidateCommissionRules(rules));
+        Assert.Throws<InvalidOperationException>(() => CommissionCalculator.ValidateCommissionRules(rules));
     }
     
     
@@ -318,7 +318,7 @@ public class InvalidRulesTests
             }
         };
 
-        Assert.Throws<InvalidOperationException>(() => CommissionCalculator.CommissionCalculator.ValidateCommissionRules(rules));
+        Assert.Throws<InvalidOperationException>(() => CommissionCalculator.ValidateCommissionRules(rules));
     }
     
     [Fact]
@@ -373,6 +373,6 @@ public class InvalidRulesTests
             }
         };
 
-        Assert.Throws<InvalidOperationException>(() => CommissionCalculator.CommissionCalculator.ValidateCommissionRules(rules));
+        Assert.Throws<InvalidOperationException>(() => CommissionCalculator.ValidateCommissionRules(rules));
     }
 }
