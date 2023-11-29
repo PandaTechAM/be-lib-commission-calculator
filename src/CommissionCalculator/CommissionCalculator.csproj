@@ -1,0 +1,22 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+    <PropertyGroup>
+        <TargetFramework>net8.0</TargetFramework>
+        <ImplicitUsings>enable</ImplicitUsings>
+        <Nullable>enable</Nullable>
+        <PackageIcon>pandatech.png</PackageIcon>
+        <PackageReadmeFile>Readme.md</PackageReadmeFile>
+        <Version>2.0.0</Version>
+        <Authors>Pandatech</Authors>
+        <PackageId>Pandatech.CommissionCalculator</PackageId>
+        <Title>Pandatech.CommissionCalculator</Title>
+        <PackageTags>Pandatech, library, calculator, commission, fee, bank, fintech</PackageTags>
+        <Description>PandaTech.CommissionCalculator is a .NET library simplifying common fintech commission calculations.</Description>
+        <RepositoryUrl>https://github.com/PandaTechAM/be-lib-commission-calculator.git</RepositoryUrl>
+        <PackageReleaseNotes>.Net 8.0 update</PackageReleaseNotes>
+    </PropertyGroup>
+    <ItemGroup>
+        <None Include="..\..\pandatech.png" Pack="true" PackagePath="\"/>
+        <None Include="..\..\Readme.md" Pack="true" PackagePath="\"/>
+    </ItemGroup>
+</Project>
