@@ -1,8 +1,8 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CommissionCalculator", "CommissionCalculator\CommissionCalculator.csproj", "{CACEA457-209D-4345-971F-F5A602CFCD27}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CommissionCalculator", "src/CommissionCalculator\CommissionCalculator.csproj", "{CACEA457-209D-4345-971F-F5A602CFCD27}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CommissionCalculatorTests", "../tests/CommissionCalculatorTests\CommissionCalculatorTests.csproj", "{2C1683D9-1F0C-4370-951E-A0C8376DD8A7}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CommissionCalculator.Tests", "src\CommissionCalculator.Tests\CommissionCalculator.Tests.csproj", "{2C1683D9-1F0C-4370-951E-A0C8376DD8A7}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
