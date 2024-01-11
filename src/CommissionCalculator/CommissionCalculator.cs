@@ -71,7 +71,7 @@ public static class CommissionCalculator
         return computedCommission;
     }
 
-    private static List<CommissionRule> ConvertCommissionRules(List<CommissionRule> rules)
+    private static List<CommissionRule> ConvertCommissionRules(IReadOnlyCollection<CommissionRule> rules)
     {
         ValidateCommissionRules(rules);
 
