@@ -5,6 +5,9 @@
 The Pandatech.CommissionCalculator is a .NET library that simplifies the commission calculation process, offering robust
 features and a flexible configuration to handle a multitude of scenarios. This package allows for both proportional and
 absolute commission calculations, rule-based tiering, and even imposes validation rules to ensure logical consistency.
+This library also includes a highly efficient utility for checking overlaps between date ranges, known
+as `DateTimeOverlapChecker`. This tool is invaluable for validating commission rule timeframes, ensuring that no two
+commission periods conflict with each other.
 
 ## Features
 
@@ -74,12 +77,40 @@ decimal commission = CommissionCalculator.ComputeCommission(principalAmount, rul
 
 ### Validation
 
+#### Validate Commission Rules
 ```csharp
 CommissionCalculator.ValidateCommissionRules(rules);
 ```
-
 Please note that the validation method is automatically called when the ComputeCommission method is invoked. If a rule
 is invalid, an exception is thrown.
+
+#### Validate DateTime Overlap
+```csharp
+using CommissionCalculator.Helper;
+using CommissionCalculator.DTO;
+
+var firstPairs = new List<DateTimePair>
+        {
+            new DateTimePair(new DateTime(2024, 1, 1), new DateTime(2024, 1, 10))
+        };
+var secondPairs = new List<DateTimePair>
+        {
+            new DateTimePair(new DateTime(2024, 1, 2), new DateTime(2024, 1, 8))
+        };
+
+bool hasOverlap = DateTimeOverlapChecker.HasOverlap(firstPairs, secondPairs);
+
+if (hasOverlap)
+{
+    Console.WriteLine("Detected overlapping date ranges.");
+}
+else
+{
+    Console.WriteLine("No overlaps found between the date ranges.");
+}
+```
+
+
 
 ## CommissionRule Properties
 
