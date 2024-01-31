@@ -40,7 +40,7 @@ public class ProportionalCommissionTests
             }
         };
 
-        var commission = CommissionCalculator.ComputeCommission(principal, rules, true, 0);
+        var commission = Commission.ComputeCommission(principal, rules, true, 0);
 
         Assert.Equal(expected, commission);
     }
