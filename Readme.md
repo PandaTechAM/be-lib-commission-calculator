@@ -72,7 +72,7 @@ decimal principalAmount = 1000m;
 bool isProportional = true;
 int decimalPlaces = 4;
 
-decimal commission = CommissionCalculator.ComputeCommission(principalAmount, rules, isProportional, decimalPlaces);
+decimal commission = Commission.ComputeCommission(principalAmount, rules, isProportional, decimalPlaces);
 ```
 
 ### Validation

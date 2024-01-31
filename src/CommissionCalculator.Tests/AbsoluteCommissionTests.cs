@@ -41,7 +41,7 @@ public class AbsoluteCommissionTests
 
         };
 
-        var commission = CommissionCalculator.ComputeCommission(principal, rules, false, 0);
+        var commission = Commission.ComputeCommission(principal, rules, false, 0);
 
         Assert.Equal(expected, commission);
     }

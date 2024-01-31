@@ -1,6 +1,6 @@
 ﻿namespace CommissionCalculator;
 
-public static class CommissionCalculator
+public static class Commission
 {
     private const decimal DecimalEpsilon = 1e-28M; //smallest decimal value that is greater than zero
 
