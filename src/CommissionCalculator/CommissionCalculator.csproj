@@ -7,14 +7,14 @@
         <PackageIcon>pandatech.png</PackageIcon>
         <PackageReadmeFile>Readme.md</PackageReadmeFile>
         <Copyright>MIT</Copyright>
-        <Version>2.1.0</Version>
+        <Version>2.1.1</Version>
         <Authors>Pandatech</Authors>
         <PackageId>Pandatech.CommissionCalculator</PackageId>
         <Title>Pandatech.CommissionCalculator</Title>
         <PackageTags>Pandatech, library, calculator, commission, fee, bank, fintech</PackageTags>
         <Description>PandaTech.CommissionCalculator is a .NET library simplifying common fintech commission calculations.</Description>
         <RepositoryUrl>https://github.com/PandaTechAM/be-lib-commission-calculator.git</RepositoryUrl>
-        <PackageReleaseNotes>Commission class name change</PackageReleaseNotes>
+        <PackageReleaseNotes>Reorganized some files</PackageReleaseNotes>
     </PropertyGroup>
     <ItemGroup>
         <None Include="..\..\pandatech.png" Pack="true" PackagePath="\"/>

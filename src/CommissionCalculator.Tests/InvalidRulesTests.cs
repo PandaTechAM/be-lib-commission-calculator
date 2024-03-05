@@ -1,4 +1,5 @@
 using CommissionCalculator;
+using CommissionCalculator.DTO;
 
 namespace CommissionCalculator.Tests;
 

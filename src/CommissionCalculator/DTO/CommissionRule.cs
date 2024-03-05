@@ -1,4 +1,4 @@
-﻿namespace CommissionCalculator;
+﻿namespace CommissionCalculator.DTO;
 
 public class CommissionRule
 {
@@ -9,10 +9,4 @@ public class CommissionRule
     public decimal CommissionAmount { get; set; }
     public decimal MinCommission { get; set; }
     public decimal MaxCommission { get; set; } //0 means infinity
-}
-
-public enum CommissionType
-{
-    FlatRate,
-    Percentage
 }
