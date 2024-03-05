@@ -7,7 +7,7 @@
         <PackageIcon>pandatech.png</PackageIcon>
         <PackageReadmeFile>Readme.md</PackageReadmeFile>
         <Copyright>MIT</Copyright>
-        <Version>2.1.1</Version>
+        <Version>2.1.2</Version>
         <Authors>Pandatech</Authors>
         <PackageId>Pandatech.CommissionCalculator</PackageId>
         <Title>Pandatech.CommissionCalculator</Title>
