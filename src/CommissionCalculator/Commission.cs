@@ -1,4 +1,6 @@
-﻿namespace CommissionCalculator;
+﻿using CommissionCalculator.DTO;
+
+namespace CommissionCalculator;
 
 public static class Commission
 {
