@@ -17,24 +17,24 @@ public class AbsoluteCommissionTests
     [InlineData(150000, 2000)]
     public void TestAbsoluteCommission(decimal principal, decimal expected)
     {
-        var rules = new List<CommissionRule>
+        var ranges = new List<CommissionRangeConfigs>
         {
-            new CommissionRule
+            new CommissionRangeConfigs
             {
                 RangeStart = 10000, RangeEnd = 0, Type = CommissionType.FlatRate, CommissionAmount = 2000,
                 MinCommission = 0, MaxCommission = 0
             },
-            new CommissionRule
+            new CommissionRangeConfigs
             {
                 RangeStart = 0, RangeEnd = 500, Type = CommissionType.FlatRate, CommissionAmount = 25,
                 MinCommission = 0, MaxCommission = 0
             },
-            new CommissionRule
+            new CommissionRangeConfigs
             {
                 RangeStart = 500, RangeEnd = 1000, Type = CommissionType.Percentage, CommissionAmount = 0.1m,
                 MinCommission = 70, MaxCommission = 90
             },
-            new CommissionRule
+            new CommissionRangeConfigs
             {
                 RangeStart = 1000, RangeEnd = 10000, Type = CommissionType.Percentage, CommissionAmount = 0.2m,
                 MinCommission = 250, MaxCommission = 1500
@@ -42,7 +42,14 @@ public class AbsoluteCommissionTests
 
         };
 
-        var commission = Commission.ComputeCommission(principal, rules, false, 0);
+        var rules = new CommissionRule
+        {
+            CalculationType = CalculationType.Absolute,
+            DecimalPlace = 0,
+            CommissionRangeConfigs = ranges
+        };
+
+        var commission = Commission.ComputeCommission(principal, rules);
 
         Assert.Equal(expected, commission);
     }

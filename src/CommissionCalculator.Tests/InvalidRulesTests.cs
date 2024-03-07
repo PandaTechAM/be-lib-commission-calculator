@@ -8,7 +8,7 @@ public class InvalidRulesTests
     [Fact]
     public void TestPercentageValidation()
     {
-        var rules = new List<CommissionRule>
+        var ranges = new List<CommissionRangeConfigs>
         {
             new()
             {
@@ -38,14 +38,21 @@ public class InvalidRulesTests
                 MaxCommission = 0
             }
         };
+        
+        var rules = new CommissionRule
+        {
+            CalculationType = CalculationType.Proportional,
+            DecimalPlace = 0,
+            CommissionRangeConfigs = ranges
+        };
 
-        Assert.Throws<InvalidOperationException>(() => Commission.ValidateCommissionRules(rules));
+        Assert.Throws<InvalidOperationException>(() => Commission.ValidateCommissionRule(rules));
     }
     
     [Fact]
     public void TestRangeEqualValidation()
     {
-        var rules = new List<CommissionRule>
+        var ranges = new List<CommissionRangeConfigs>
         {
             new()
             {
@@ -75,14 +82,21 @@ public class InvalidRulesTests
                 MaxCommission = 0
             }
         };
+        
+        var rules = new CommissionRule
+        {
+            CalculationType = CalculationType.Proportional,
+            DecimalPlace = 0,
+            CommissionRangeConfigs = ranges
+        };
 
-        Assert.Throws<InvalidOperationException>(() => Commission.ValidateCommissionRules(rules));
+        Assert.Throws<InvalidOperationException>(() => Commission.ValidateCommissionRule(rules));
     }
     
     [Fact]
     public void TestRangeOverlappingValidation()
     {
-        var rules = new List<CommissionRule>
+        var ranges = new List<CommissionRangeConfigs>
         {
             new()
             {
@@ -112,15 +126,22 @@ public class InvalidRulesTests
                 MaxCommission = 0
             }
         };
+        
+        var rules = new CommissionRule
+        {
+            CalculationType = CalculationType.Proportional,
+            DecimalPlace = 0,
+            CommissionRangeConfigs = ranges
+        };
 
-        Assert.Throws<InvalidOperationException>(() => Commission.ValidateCommissionRules(rules));
+        Assert.Throws<InvalidOperationException>(() => Commission.ValidateCommissionRule(rules));
     }
 
     
     [Fact]
     public void TestWrongRangeStart()
     {
-        var rules = new List<CommissionRule>
+        var ranges = new List<CommissionRangeConfigs>
         {
             new()
             {
@@ -150,14 +171,21 @@ public class InvalidRulesTests
                 MaxCommission = 0
             }
         };
+        
+        var rules = new CommissionRule
+        {
+            CalculationType = CalculationType.Proportional,
+            DecimalPlace = 0,
+            CommissionRangeConfigs = ranges
+        };
 
-        Assert.Throws<InvalidOperationException>(() => Commission.ValidateCommissionRules(rules));
+        Assert.Throws<InvalidOperationException>(() => Commission.ValidateCommissionRule(rules));
     }
     
     [Fact]
     public void TestWrongRangeEnd()
     {
-        var rules = new List<CommissionRule>
+        var ranges = new List<CommissionRangeConfigs>
         {
             new()
             {
@@ -187,14 +215,21 @@ public class InvalidRulesTests
                 MaxCommission = 0
             }
         };
+        
+        var rules = new CommissionRule
+        {
+            CalculationType = CalculationType.Proportional,
+            DecimalPlace = 0,
+            CommissionRangeConfigs = ranges
+        };
 
-        Assert.Throws<InvalidOperationException>(() => Commission.ValidateCommissionRules(rules));
+        Assert.Throws<InvalidOperationException>(() => Commission.ValidateCommissionRule(rules));
     }
     
     [Fact]
     public void TestGap()
     {
-        var rules = new List<CommissionRule>
+        var ranges = new List<CommissionRangeConfigs>
         {
             new()
             {
@@ -224,14 +259,21 @@ public class InvalidRulesTests
                 MaxCommission = 0
             }
         };
+        
+        var rules = new CommissionRule
+        {
+            CalculationType = CalculationType.Proportional,
+            DecimalPlace = 0,
+            CommissionRangeConfigs = ranges
+        };
 
-        Assert.Throws<InvalidOperationException>(() => Commission.ValidateCommissionRules(rules));
+        Assert.Throws<InvalidOperationException>(() => Commission.ValidateCommissionRule(rules));
     }
     
     [Fact]
     public void TestDuplicates()
     {
-        var rules = new List<CommissionRule>
+        var ranges = new List<CommissionRangeConfigs>
         {
             new()
             {
@@ -270,8 +312,15 @@ public class InvalidRulesTests
                 MaxCommission = 0
             }
         };
+        
+        var rules = new CommissionRule
+        {
+            CalculationType = CalculationType.Proportional,
+            DecimalPlace = 0,
+            CommissionRangeConfigs = ranges
+        };
 
-        Assert.Throws<InvalidOperationException>(() => Commission.ValidateCommissionRules(rules));
+        Assert.Throws<InvalidOperationException>(() => Commission.ValidateCommissionRule(rules));
     }
     
     
@@ -279,7 +328,7 @@ public class InvalidRulesTests
     [Fact]
     public void TestNestedRange()
     {
-        var rules = new List<CommissionRule>
+        var ranges = new List<CommissionRangeConfigs>
         {
             new()
             {
@@ -318,14 +367,21 @@ public class InvalidRulesTests
                 MaxCommission = 0
             }
         };
+        
+        var rules = new CommissionRule
+        {
+            CalculationType = CalculationType.Proportional,
+            DecimalPlace = 0,
+            CommissionRangeConfigs = ranges
+        };
 
-        Assert.Throws<InvalidOperationException>(() => Commission.ValidateCommissionRules(rules));
+        Assert.Throws<InvalidOperationException>(() => Commission.ValidateCommissionRule(rules));
     }
     
     [Fact]
     public void TestNested2Range()
     {
-        var rules = new List<CommissionRule>
+        var ranges = new List<CommissionRangeConfigs>
         {
             new()
             {
@@ -373,7 +429,14 @@ public class InvalidRulesTests
                 MaxCommission = 0
             }
         };
+        
+        var rules = new CommissionRule
+        {
+            CalculationType = CalculationType.Proportional,
+            DecimalPlace = 0,
+            CommissionRangeConfigs = ranges
+        };
 
-        Assert.Throws<InvalidOperationException>(() => Commission.ValidateCommissionRules(rules));
+        Assert.Throws<InvalidOperationException>(() => Commission.ValidateCommissionRule(rules));
     }
 }
