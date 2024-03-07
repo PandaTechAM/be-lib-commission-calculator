@@ -6,55 +6,55 @@ public static class Commission
 {
     private const decimal DecimalEpsilon = 1e-28M; //smallest decimal value that is greater than zero
 
-    public static decimal ComputeCommission(decimal principalAmount, List<CommissionRule> rules,
-        bool isProportional, int decimalPlaces = 4)
+    public static decimal ComputeCommission(decimal principalAmount, CommissionRule rule)
     {
         decimal commission;
 
-        if (isProportional)
+        if (rule.CalculationType == CalculationType.Proportional)
         {
-            commission = CalculateProportionalCommission(principalAmount, rules);
-            return Math.Round(commission, decimalPlaces);
+            commission = CalculateProportionalCommission(principalAmount, rule);
+            return Math.Round(commission, rule.DecimalPlace);
         }
 
-        commission = CalculateAbsoluteCommission(principalAmount, rules);
-        return Math.Round(commission, decimalPlaces);
+        commission = CalculateAbsoluteCommission(principalAmount, rule);
+        return Math.Round(commission, rule.DecimalPlace);
     }
 
-    private static decimal CalculateAbsoluteCommission(decimal principalAmount, List<CommissionRule> rules)
+    private static decimal CalculateAbsoluteCommission(decimal principalAmount, CommissionRule rule)
     {
-        rules = ConvertCommissionRules(rules);
+        rule = ConvertCommissionRanges(rule);
 
-        var rule = rules.FirstOrDefault(r => principalAmount >= r.RangeStart && principalAmount < r.RangeEnd);
+        var range = rule.CommissionRangeConfigs.FirstOrDefault(r =>
+            principalAmount >= r.RangeStart && principalAmount < r.RangeEnd);
 
-        return ComputeRuleCommission(rule!.Type, rule.CommissionAmount, rule.MinCommission, rule.MaxCommission,
+        return ComputeRangeCommission(range!.Type, range.CommissionAmount, range.MinCommission, range.MaxCommission,
             principalAmount);
     }
 
-    private static decimal CalculateProportionalCommission(decimal principalAmount, List<CommissionRule> rules)
+    private static decimal CalculateProportionalCommission(decimal principalAmount, CommissionRule rule)
     {
-        rules = ConvertCommissionRules(rules);
+        rule = ConvertCommissionRanges(rule);
 
         decimal commission = 0;
 
 
-        foreach (var rule in rules)
+        foreach (var range in rule.CommissionRangeConfigs)
         {
-            if (principalAmount >= rule.RangeStart && principalAmount < rule.RangeEnd)
+            if (principalAmount >= range.RangeStart && principalAmount < range.RangeEnd)
             {
-                var portionOfPrincipal = principalAmount - rule.RangeStart;
+                var portionOfPrincipal = principalAmount - range.RangeStart;
 
-                commission += ComputeRuleCommission(rule.Type, rule.CommissionAmount, rule.MinCommission,
-                    rule.MaxCommission,
+                commission += ComputeRangeCommission(range.Type, range.CommissionAmount, range.MinCommission,
+                    range.MaxCommission,
                     portionOfPrincipal);
             }
 
-            if (principalAmount >= rule.RangeEnd)
+            if (principalAmount < range.RangeEnd) continue;
             {
-                var portionOfPrincipal = rule.RangeEnd - rule.RangeStart - DecimalEpsilon;
+                var portionOfPrincipal = range.RangeEnd - range.RangeStart - DecimalEpsilon;
 
-                commission += ComputeRuleCommission(rule.Type, rule.CommissionAmount, rule.MinCommission,
-                    rule.MaxCommission,
+                commission += ComputeRangeCommission(range.Type, range.CommissionAmount, range.MinCommission,
+                    range.MaxCommission,
                     portionOfPrincipal);
             }
         }
@@ -62,7 +62,7 @@ public static class Commission
         return commission;
     }
 
-    private static decimal ComputeRuleCommission(CommissionType commissionType, decimal commission, decimal minimum,
+    private static decimal ComputeRangeCommission(CommissionType commissionType, decimal commission, decimal minimum,
         decimal maximum,
         decimal principalAmount)
     {
@@ -73,37 +73,44 @@ public static class Commission
         return computedCommission;
     }
 
-    private static List<CommissionRule> ConvertCommissionRules(IReadOnlyCollection<CommissionRule> rules)
+    private static CommissionRule ConvertCommissionRanges(CommissionRule rule)
     {
-        ValidateCommissionRules(rules);
+        ValidateCommissionRule(rule);
 
-        return rules.Select(rule => new CommissionRule
+        var convertedRanges = rule.CommissionRangeConfigs.Select(c => new CommissionRangeConfigs
             {
-                RangeStart = rule.RangeStart,
-                RangeEnd = rule.RangeEnd == 0 ? decimal.MaxValue : rule.RangeEnd,
-                Type = rule.Type,
-                CommissionAmount = rule.CommissionAmount,
-                MinCommission = rule.MinCommission,
-                MaxCommission = rule.MaxCommission == 0 ? decimal.MaxValue : rule.MaxCommission
+                RangeStart = c.RangeStart,
+                RangeEnd = c.RangeEnd == 0 ? decimal.MaxValue : c.RangeEnd,
+                Type = c.Type,
+                CommissionAmount = c.CommissionAmount,
+                MinCommission = c.MinCommission,
+                MaxCommission = c.MaxCommission == 0 ? decimal.MaxValue : c.MaxCommission
             })
             .ToList();
+        return new CommissionRule
+        {
+            CalculationType = rule.CalculationType,
+            DecimalPlace = rule.DecimalPlace,
+            CommissionRangeConfigs = convertedRanges
+        };
     }
 
 
-    public static void ValidateCommissionRules(IReadOnlyCollection<CommissionRule> rules)
+    public static void ValidateCommissionRule(CommissionRule rule)
     {
-        if (rules == null || !rules.Any())
+        if (rule == null || rule.CommissionRangeConfigs.Count == 0)
         {
-            throw new ArgumentException("The rules list cannot be null or empty.");
+            throw new ArgumentException("The ranges list cannot be null or empty.");
         }
 
-        if (rules.Any(r => r is { Type: CommissionType.Percentage, CommissionAmount: < -1 or > 1 }))
+        if (rule.CommissionRangeConfigs.Any(
+                r => r is { Type: CommissionType.Percentage, CommissionAmount: < -1 or > 1 }))
         {
             throw new InvalidOperationException(
                 "For 'Percentage' CommissionType, the CommissionAmount should be between -1 and 1.");
         }
 
-        var startRule = rules.FirstOrDefault(r => r.RangeStart == 0 && r.RangeEnd != 0);
+        var startRule = rule.CommissionRangeConfigs.FirstOrDefault(r => r.RangeStart == 0 && r.RangeEnd != 0);
         if (startRule == null)
         {
             throw new InvalidOperationException("There should be at least one rule where From = 0.");
@@ -115,7 +122,7 @@ public static class Commission
 
         while (true)
         {
-            var nextRule = rules.FirstOrDefault(r => r.RangeStart == lastTo);
+            var nextRule = rule.CommissionRangeConfigs.FirstOrDefault(r => r.RangeStart == lastTo);
             if (nextRule == null && lastTo != 0)
             {
                 throw new InvalidOperationException($"Gap detected. No rule found for 'From = {lastTo}'.");
@@ -130,11 +137,13 @@ public static class Commission
             {
                 break;
             }
+
             verifiedRules++;
 
             lastTo = nextRule!.RangeEnd;
         }
-        if(verifiedRules != rules.Count)
+
+        if (verifiedRules != rule.CommissionRangeConfigs.Count)
         {
             throw new InvalidOperationException("There is some nested or gap ranges in the rules.");
         }

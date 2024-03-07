@@ -1,137 +1,149 @@
-# Pandatech.CommissionCalculator
+- [1. Pandatech.CommissionCalculator](#1-pandatechcommissioncalculator)
+  - [1.1. Overview](#11-overview)
+  - [1.2. Features](#12-features)
+  - [1.3. Installation](#13-installation)
+  - [1.4. Usage](#14-usage)
+    - [1.4.1. Define Commission Rule](#141-define-commission-rule)
+    - [1.4.2. Compute Commission](#142-compute-commission)
+    - [1.4.3. Validation](#143-validation)
+    - [1.4.4. Validate DateTime Overlap](#144-validate-datetime-overlap)
+  - [1.5. CommissionRangeConfig Properties](#15-commissionrangeconfig-properties)
+  - [1.6. Conventions](#16-conventions)
+  - [1.7. Contributing](#17-contributing)
+  - [1.8. License](#18-license)
 
-## Overview
+# 1. Pandatech.CommissionCalculator
 
-The Pandatech.CommissionCalculator is a .NET library that simplifies the commission calculation process, offering robust
-features and a flexible configuration to handle a multitude of scenarios. This package allows for both proportional and
-absolute commission calculations, rule-based tiering, and even imposes validation rules to ensure logical consistency.
-This library also includes a highly efficient utility for checking overlaps between date ranges, known
-as `DateTimeOverlapChecker`. This tool is invaluable for validating commission rule timeframes, ensuring that no two
-commission periods conflict with each other.
+## 1.1. Overview
 
-## Features
+The updated Pandatech.CommissionCalculator is a comprehensive .NET library designed to streamline commission calculations. With enhanced features supporting both proportional and absolute commission types, the library now offers more granular control over commission calculations through detailed range configurations. The introduction of CalculationType in commission rules allows users to specify the nature of the commission calculation explicitly. Moreover, the library maintains its utility for date range overlap checks with improved efficiency, ensuring commission period validations remain precise and reliable.
 
-* **Proportional and Absolute Commissions** - The library supports both proportional and absolute commission
-  calculations. Choose between proportional or absolute commission types for flexibility.
-* **Rule-Based Tiering** - Define custom rules for various range tiers.
-* **Auto-Validation** - The package performs automatic validation on your commission rules. If a rule is invalid, an
-  exception is thrown.
-* **Strict Rule Coverage** - Ensures your rule set covers the entire domain from 0 to +∞.
-* **Flexible Configuration** - The library is highly configurable, allowing you to define your own commission rules,
-  commission types, and validation rules.
-* **High Test Coverage** - The library is thoroughly tested, with 99% code coverage.
-* **Highly Performant** - The library is highly performant, with at least 1,500,000 calculations per second.
+## 1.2. Features
 
-## Installation
+- **Proportional and Absolute Commissions** - Enhanced support for both proportional and absolute commission calculations, providing extensive flexibility in defining commission structures.
+- **Detailed Commission Range Configurations** - Define commission calculations with precision using `CommissionRangeConfigs`, allowing for intricate rule definitions.
+- **Rule-Based Tiering** - Define custom rules for various range tiers.
+- **Auto-Validation** - Improved validation mechanisms ensure that commission rules are logically consistent and well-structured before computation.
+- **Strict Rule Coverage** - Guarantees complete domain coverage from 0 to +∞, with validation checks to ensure no gaps or overlaps in commission ranges.
+- **Configurable** - The library is highly configurable, allowing you to define your own commission ranges and commission types.
+- **Robust Testing** - Achieves 99% code coverage, ensuring reliability.
+- **Optimized Performance** - Delivers high performance, capable of over 1.5 million calculations per second.
 
-The Pandatech.CommissionCalculator library is available on NuGet. To install, run the following command in the Package
-Manager Console:
+## 1.3. Installation
+
+Install the latest version of the Pandatech.CommissionCalculator library via NuGet with the following command:
 
 ```bash
 Install-Package Pandatech.CommissionCalculator
 ```
 
-## Usage
+## 1.4. Usage
 
-### Initialize Commission Rules
+### 1.4.1. Define Commission Rule
 
 ```csharp
-var rules = new List<CommissionRule>
+using CommissionCalculator.DTO;
+
+var rules = new CommissionRule
 {
-    // Add your commission rules here
-    var rules = new List<CommissionRule>
-        {
-            new CommissionRule
+    CalculationType = CalculationType.Proportional,
+    DecimalPlace = 4,
+    CommissionRangeConfigs = new List<CommissionRangeConfigs>
+    {
+        new CommissionRule
             {
-                RangeStart = 0, RangeEnd = 500, Type = CommissionType.FlatRate, CommissionAmount = 25,
-                MinCommission = 0, MaxCommission = 0
+                RangeStart = 0,
+                RangeEnd = 500,
+                Type = CommissionType.FlatRate,
+                CommissionAmount = 25,
+                MinCommission = 0,
+                MaxCommission = 0
             },
             new CommissionRule
             {
-                RangeStart = 500, RangeEnd = 1000, Type = CommissionType.Percentage, CommissionAmount = 0.1m,
-                MinCommission = 70, MaxCommission = 90
+                RangeStart = 500,
+                RangeEnd = 1000,
+                Type = CommissionType.Percentage,
+                CommissionAmount = 0.1m,
+                MinCommission = 70,
+                MaxCommission = 90
             },
             new CommissionRule
             {
-                RangeStart = 1000, RangeEnd = 10000, Type = CommissionType.Percentage, CommissionAmount = 0.2m,
-                MinCommission = 250, MaxCommission = 1500
+                RangeStart = 1000,
+                RangeEnd = 10000,
+                Type = CommissionType.Percentage,
+                CommissionAmount = 0.2m,
+                MinCommission = 250,
+                MaxCommission = 1500
             },
             new CommissionRule
             {
-                RangeStart = 10000, RangeEnd = 0, Type = CommissionType.FlatRate, CommissionAmount = 2000,
-                MinCommission = 0, MaxCommission = 0
+                RangeStart = 10000,
+                RangeEnd = 0,
+                Type = CommissionType.FlatRate,
+                CommissionAmount = 2000,
+                MinCommission = 0,
+                MaxCommission = 0
             }
-        };
+    }
 };
 ```
 
-### Compute Commission
+### 1.4.2. Compute Commission
 
 ```csharp
 decimal principalAmount = 1000m;
-bool isProportional = true;
-int decimalPlaces = 4;
-
-decimal commission = Commission.ComputeCommission(principalAmount, rules, isProportional, decimalPlaces);
+decimal commission = Commission.ComputeCommission(principalAmount, rule);
 ```
 
-### Validation
+### 1.4.3. Validation
 
-#### Validate Commission Rules
+Validate your commission rules to ensure they are consistent and cover the required domain without overlaps or gaps:
+
 ```csharp
-CommissionCalculator.ValidateCommissionRules(rules);
+CommissionCalculator.ValidateCommissionRule(rule);
 ```
-Please note that the validation method is automatically called when the ComputeCommission method is invoked. If a rule
-is invalid, an exception is thrown.
 
-#### Validate DateTime Overlap
+The validation is automatically performed when computing the commission to prevent logical inconsistencies.
+
+### 1.4.4. Validate DateTime Overlap
+
 ```csharp
 using CommissionCalculator.Helper;
 using CommissionCalculator.DTO;
 
-var firstPairs = new List<DateTimePair>
-        {
-            new DateTimePair(new DateTime(2024, 1, 1), new DateTime(2024, 1, 10))
-        };
-var secondPairs = new List<DateTimePair>
-        {
-            new DateTimePair(new DateTime(2024, 1, 2), new DateTime(2024, 1, 8))
-        };
-
-bool hasOverlap = DateTimeOverlapChecker.HasOverlap(firstPairs, secondPairs);
-
-if (hasOverlap)
+var firstRange = new List<DateTimePair>
 {
-    Console.WriteLine("Detected overlapping date ranges.");
-}
-else
+    new DateTimePair(new DateTime(2024, 1, 1), new DateTime(2024, 1, 10))
+};
+var secondRange = new List<DateTimePair>
 {
-    Console.WriteLine("No overlaps found between the date ranges.");
-}
+    new DateTimePair(new DateTime(2024, 1, 2), new DateTime(2024, 1, 8))
+};
+
+bool hasOverlap = DateTimeOverlapChecker.HasOverlap(firstRange, secondRange);
+Console.WriteLine(hasOverlap ? "Overlap detected." : "No overlaps.");
 ```
 
+## 1.5. CommissionRangeConfig Properties
 
+- **RangeStart:** The beginning of the commission rule's range.
+- **RangeEnd:** The end of the range (set to 0 for +∞).
+- **Type:** Determines if the commission is a flat rate or percentage.
+- **CommissionAmount:** The specific commission amount for the range.
+- **MinCommission:** The range minimum commission.
+- **MaxCommission:** The range maximum commission (0 for +∞).
 
-## CommissionRule Properties
+## 1.6. Conventions
 
-| Property         | Type           | Description                                                               |
-|------------------|----------------|---------------------------------------------------------------------------|
-| RangeStart       | decimal        | The start range for this rule.                                            |
-| RangeEnd         | decimal        | The end range for this rule (0 means infinity).                           |
-| Type             | CommissionType | Enum that specifies whether the commission type is FlatRate or Percentage |
-| CommissionAmount | decimal        | The commission amount for this rule.                                      |
-| MinCommission    | decimal        | The minimum commission for this rule.                                     |
-| MaxCommission    | decimal        | The maximum commission for this rule (0 means infinity).                  |
+- If you need to specify +∞, set `RangeEnd` or `MaxCommission` to 0. This is for database efficiency.
+- Ensure that your rules cover the entire domain `[0, +∞)`. If a rule is missing, an exception is thrown.
 
-## Conventions
-
-* If you need to specify +∞, set `RangeEnd` or `MaxCommission` to 0. This is for database efficiency.
-* Ensure that your rules cover the entire domain `[0, +∞)`. If a rule is missing, an exception is thrown.
-
-## Contributing
+## 1.7. Contributing
 
 Pull requests are welcome. For major changes, please open an issue first to discuss what you would like to change.
 
-## License
+## 1.8. License
 
 This project is licensed under the MIT License.
