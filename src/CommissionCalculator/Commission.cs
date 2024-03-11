@@ -110,6 +110,21 @@ public static class Commission
                 "For 'Percentage' CommissionType, the CommissionAmount should be between -1 and 1.");
         }
 
+        if (rule.CommissionRangeConfigs.Count == 1)
+        {
+            if (rule.CommissionRangeConfigs[0].RangeStart != 0 || rule.CommissionRangeConfigs[0].RangeEnd != 0)
+            {
+                throw new InvalidOperationException("In case of one range, both 'From' and 'To' should be 0.");
+            }
+        }
+        else
+        {
+            ValidateEachRange(rule);
+        }
+    }
+
+    private static void ValidateEachRange(CommissionRule rule)
+    {
         var startRule = rule.CommissionRangeConfigs.FirstOrDefault(r => r.RangeStart == 0 && r.RangeEnd != 0);
         if (startRule == null)
         {
