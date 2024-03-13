@@ -104,12 +104,27 @@ public static class Commission
         }
 
         if (rule.CommissionRangeConfigs.Any(
-                r => r is { Type: CommissionType.Percentage, CommissionAmount: < -1 or > 1 }))
+                r => r is { Type: CommissionType.Percentage, CommissionAmount: < -10 or > 10 }))
         {
             throw new InvalidOperationException(
-                "For 'Percentage' CommissionType, the CommissionAmount should be between -1 and 1.");
+                "For 'Percentage' CommissionType, the CommissionAmount should be between -10 and 10. Commissions over 1000% are not allowed.");
         }
 
+        if (rule.CommissionRangeConfigs.Count == 1)
+        {
+            if (rule.CommissionRangeConfigs[0].RangeStart != 0 || rule.CommissionRangeConfigs[0].RangeEnd != 0)
+            {
+                throw new InvalidOperationException("In case of one range, both 'From' and 'To' should be 0.");
+            }
+        }
+        else
+        {
+            ValidateEachRange(rule);
+        }
+    }
+
+    private static void ValidateEachRange(CommissionRule rule)
+    {
         var startRule = rule.CommissionRangeConfigs.FirstOrDefault(r => r.RangeStart == 0 && r.RangeEnd != 0);
         if (startRule == null)
         {
