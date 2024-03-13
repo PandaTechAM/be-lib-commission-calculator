@@ -30,14 +30,14 @@ public class InvalidRulesTests
             new()
             {
                 RangeStart = 5000,
-                RangeEnd = 7000,
+                RangeEnd = 0,
                 Type = CommissionType.Percentage,
                 CommissionAmount = 0.03m,
                 MinCommission = 0,
                 MaxCommission = 0
             }
         };
-        
+
         var rules = new CommissionRule
         {
             CalculationType = CalculationType.Proportional,
@@ -49,7 +49,7 @@ public class InvalidRulesTests
 
         Assert.False(isValid);
     }
-    
+
     [Fact]
     public void TestRangeEqualValidation()
     {
@@ -83,7 +83,7 @@ public class InvalidRulesTests
                 MaxCommission = 0
             }
         };
-        
+
         var rules = new CommissionRule
         {
             CalculationType = CalculationType.Proportional,
@@ -95,7 +95,7 @@ public class InvalidRulesTests
 
         Assert.False(isValid);
     }
-    
+
     [Fact]
     public void TestRangeOverlappingValidation()
     {
@@ -129,7 +129,7 @@ public class InvalidRulesTests
                 MaxCommission = 0
             }
         };
-        
+
         var rules = new CommissionRule
         {
             CalculationType = CalculationType.Proportional,
@@ -142,7 +142,7 @@ public class InvalidRulesTests
         Assert.False(isValid);
     }
 
-    
+
     [Fact]
     public void TestWrongRangeStart()
     {
@@ -176,7 +176,7 @@ public class InvalidRulesTests
                 MaxCommission = 0
             }
         };
-        
+
         var rules = new CommissionRule
         {
             CalculationType = CalculationType.Proportional,
@@ -188,7 +188,7 @@ public class InvalidRulesTests
 
         Assert.False(isValid);
     }
-    
+
     [Fact]
     public void TestWrongRangeEnd()
     {
@@ -222,7 +222,7 @@ public class InvalidRulesTests
                 MaxCommission = 0
             }
         };
-        
+
         var rules = new CommissionRule
         {
             CalculationType = CalculationType.Proportional,
@@ -234,7 +234,7 @@ public class InvalidRulesTests
 
         Assert.False(isValid);
     }
-    
+
     [Fact]
     public void TestGap()
     {
@@ -268,7 +268,7 @@ public class InvalidRulesTests
                 MaxCommission = 0
             }
         };
-        
+
         var rules = new CommissionRule
         {
             CalculationType = CalculationType.Proportional,
@@ -280,7 +280,7 @@ public class InvalidRulesTests
 
         Assert.False(isValid);
     }
-    
+
     [Fact]
     public void TestDuplicates()
     {
@@ -323,7 +323,7 @@ public class InvalidRulesTests
                 MaxCommission = 0
             }
         };
-        
+
         var rules = new CommissionRule
         {
             CalculationType = CalculationType.Proportional,
@@ -335,9 +335,8 @@ public class InvalidRulesTests
 
         Assert.False(isValid);
     }
-    
-    
-        
+
+
     [Fact]
     public void TestNestedRange()
     {
@@ -380,7 +379,7 @@ public class InvalidRulesTests
                 MaxCommission = 0
             }
         };
-        
+
         var rules = new CommissionRule
         {
             CalculationType = CalculationType.Proportional,
@@ -392,7 +391,7 @@ public class InvalidRulesTests
 
         Assert.False(isValid);
     }
-    
+
     [Fact]
     public void TestNested2Range()
     {
@@ -444,7 +443,7 @@ public class InvalidRulesTests
                 MaxCommission = 0
             }
         };
-        
+
         var rules = new CommissionRule
         {
             CalculationType = CalculationType.Proportional,
@@ -455,5 +454,33 @@ public class InvalidRulesTests
         var isValid = Commission.ValidateRule(rules);
 
         Assert.False(isValid);
+    }
+
+    [Fact]
+    public void TestInfiniteRange()
+    {
+        var ranges = new List<CommissionRangeConfigs>
+        {
+            new()
+            {
+                RangeStart = 0,
+                RangeEnd = 0,
+                Type = CommissionType.Percentage,
+                CommissionAmount = 0.1m,
+                MinCommission = 0,
+                MaxCommission = 0
+            }
+        };
+        
+        var rules = new CommissionRule
+        {
+            CalculationType = CalculationType.Proportional,
+            DecimalPlace = 0,
+            CommissionRangeConfigs = ranges
+        };
+        
+        Commission.ValidateCommissionRule(rules);
+        
+        Assert.True(true);
     }
 }
