@@ -96,7 +96,7 @@ public static class Commission
     }
 
 
-    public static void ValidateCommissionRule(CommissionRule rule)
+    private static void ValidateCommissionRule(CommissionRule rule)
     {
         if (rule == null || rule.CommissionRangeConfigs.Count == 0)
         {
@@ -146,6 +146,19 @@ public static class Commission
         if (verifiedRules != rule.CommissionRangeConfigs.Count)
         {
             throw new InvalidOperationException("There is some nested or gap ranges in the rules.");
+        }
+    }
+
+    public static bool ValidateRule(CommissionRule rule)
+    {
+        try
+        {
+            ValidateCommissionRule(rule);
+            return true;
+        }
+        catch (Exception)
+        {
+            return false;
         }
     }
 }

@@ -1,4 +1,3 @@
-using CommissionCalculator;
 using CommissionCalculator.DTO;
 
 namespace CommissionCalculator.Tests;
@@ -46,7 +45,9 @@ public class InvalidRulesTests
             CommissionRangeConfigs = ranges
         };
 
-        Assert.Throws<InvalidOperationException>(() => Commission.ValidateCommissionRule(rules));
+        var isValid = Commission.ValidateRule(rules);
+
+        Assert.False(isValid);
     }
     
     [Fact]
@@ -90,7 +91,9 @@ public class InvalidRulesTests
             CommissionRangeConfigs = ranges
         };
 
-        Assert.Throws<InvalidOperationException>(() => Commission.ValidateCommissionRule(rules));
+        var isValid = Commission.ValidateRule(rules);
+
+        Assert.False(isValid);
     }
     
     [Fact]
@@ -134,7 +137,9 @@ public class InvalidRulesTests
             CommissionRangeConfigs = ranges
         };
 
-        Assert.Throws<InvalidOperationException>(() => Commission.ValidateCommissionRule(rules));
+        var isValid = Commission.ValidateRule(rules);
+
+        Assert.False(isValid);
     }
 
     
@@ -179,7 +184,9 @@ public class InvalidRulesTests
             CommissionRangeConfigs = ranges
         };
 
-        Assert.Throws<InvalidOperationException>(() => Commission.ValidateCommissionRule(rules));
+        var isValid = Commission.ValidateRule(rules);
+
+        Assert.False(isValid);
     }
     
     [Fact]
@@ -222,8 +229,10 @@ public class InvalidRulesTests
             DecimalPlace = 0,
             CommissionRangeConfigs = ranges
         };
+        
+        var isValid = Commission.ValidateRule(rules);
 
-        Assert.Throws<InvalidOperationException>(() => Commission.ValidateCommissionRule(rules));
+        Assert.False(isValid);
     }
     
     [Fact]
@@ -267,7 +276,9 @@ public class InvalidRulesTests
             CommissionRangeConfigs = ranges
         };
 
-        Assert.Throws<InvalidOperationException>(() => Commission.ValidateCommissionRule(rules));
+        var isValid = Commission.ValidateRule(rules);
+
+        Assert.False(isValid);
     }
     
     [Fact]
@@ -320,7 +331,9 @@ public class InvalidRulesTests
             CommissionRangeConfigs = ranges
         };
 
-        Assert.Throws<InvalidOperationException>(() => Commission.ValidateCommissionRule(rules));
+        var isValid = Commission.ValidateRule(rules);
+
+        Assert.False(isValid);
     }
     
     
@@ -375,7 +388,9 @@ public class InvalidRulesTests
             CommissionRangeConfigs = ranges
         };
 
-        Assert.Throws<InvalidOperationException>(() => Commission.ValidateCommissionRule(rules));
+        var isValid = Commission.ValidateRule(rules);
+
+        Assert.False(isValid);
     }
     
     [Fact]
@@ -437,6 +452,8 @@ public class InvalidRulesTests
             CommissionRangeConfigs = ranges
         };
 
-        Assert.Throws<InvalidOperationException>(() => Commission.ValidateCommissionRule(rules));
+        var isValid = Commission.ValidateRule(rules);
+
+        Assert.False(isValid);
     }
 }
