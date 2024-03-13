@@ -479,7 +479,7 @@ public class InvalidRulesTests
             CommissionRangeConfigs = ranges
         };
         
-        Commission.ValidateCommissionRule(rules);
+        Commission.ValidateRule(rules);
         
         Assert.True(true);
     }
