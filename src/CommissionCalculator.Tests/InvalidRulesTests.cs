@@ -31,7 +31,7 @@ public class InvalidRulesTests
             new()
             {
                 RangeStart = 5000,
-                RangeEnd = 7000,
+                RangeEnd = 0,
                 Type = CommissionType.Percentage,
                 CommissionAmount = 0.03m,
                 MinCommission = 0,
