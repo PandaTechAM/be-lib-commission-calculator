@@ -102,7 +102,7 @@ decimal commission = Commission.ComputeCommission(principalAmount, rule);
 Validate your commission rules to ensure they are consistent and cover the required domain without overlaps or gaps:
 
 ```csharp
-CommissionCalculator.ValidateCommissionRule(rule);
+var isValidRule = CommissionCalculator.ValidateRule(rule);
 ```
 
 The validation is automatically performed when computing the commission to prevent logical inconsistencies.
