@@ -38,8 +38,9 @@ public static class Commission
         decimal commission = 0;
 
 
-        foreach (var range in rule.CommissionRangeConfigs)
+        for (var index = 0; index < rule.CommissionRangeConfigs.Count; index++)
         {
+            var range = rule.CommissionRangeConfigs[index];
             if (principalAmount >= range.RangeStart && principalAmount < range.RangeEnd)
             {
                 var portionOfPrincipal = principalAmount - range.RangeStart;
@@ -69,8 +70,7 @@ public static class Commission
         if (commissionType == CommissionType.FlatRate) return commission;
         var computedCommission = principalAmount * commission;
         if (computedCommission < minimum) return minimum;
-        if (computedCommission > maximum) return maximum;
-        return computedCommission;
+        return computedCommission > maximum ? maximum : computedCommission;
     }
 
     private static CommissionRule ConvertCommissionRanges(CommissionRule rule)
@@ -116,6 +116,10 @@ public static class Commission
             {
                 throw new InvalidOperationException("In case of one range, both 'From' and 'To' should be 0.");
             }
+            if (rule.CommissionRangeConfigs[0].MaxCommission != 0 && rule.CommissionRangeConfigs[0].MaxCommission < rule.CommissionRangeConfigs[0].MinCommission)
+            {
+                throw new InvalidOperationException("MaxCommission should be greater than or equal to MinCommission.");
+            }
         }
         else
         {
@@ -125,10 +129,15 @@ public static class Commission
 
     private static void ValidateEachRange(CommissionRule rule)
     {
-        var startRule = rule.CommissionRangeConfigs.FirstOrDefault(r => r.RangeStart == 0 && r.RangeEnd != 0);
+        var startRule = rule.CommissionRangeConfigs.FirstOrDefault(r => r is { RangeStart: 0, RangeEnd: > 0 });
         if (startRule == null)
         {
             throw new InvalidOperationException("There should be at least one rule where From = 0.");
+        }
+
+        if (startRule.MaxCommission != 0 && startRule.MaxCommission < startRule.MinCommission)
+        {
+            throw new InvalidOperationException("MaxCommission should be greater than or equal to MinCommission.");
         }
 
         var verifiedRules = 1;
@@ -138,14 +147,19 @@ public static class Commission
         while (true)
         {
             var nextRule = rule.CommissionRangeConfigs.FirstOrDefault(r => r.RangeStart == lastTo);
-            if (nextRule == null && lastTo != 0)
+            if (nextRule is null && lastTo != 0)
             {
                 throw new InvalidOperationException($"Gap detected. No rule found for 'From = {lastTo}'.");
             }
 
-            if (nextRule != null && nextRule.RangeStart == nextRule.RangeEnd)
+            if (nextRule is not null && nextRule.RangeStart == nextRule.RangeEnd)
             {
                 throw new InvalidOperationException($"Invalid rule. 'From' and 'To' cannot be equal.");
+            }
+            
+            if (nextRule is not null && nextRule.MaxCommission != 0 && nextRule.MaxCommission < nextRule.MinCommission)
+            {
+                throw new InvalidOperationException("MaxCommission should be greater than or equal to MinCommission.");
             }
 
             if (lastTo == 0)

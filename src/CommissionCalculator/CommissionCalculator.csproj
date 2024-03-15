@@ -7,14 +7,14 @@
         <PackageIcon>pandatech.png</PackageIcon>
         <PackageReadmeFile>Readme.md</PackageReadmeFile>
         <Copyright>MIT</Copyright>
-        <Version>3.2.1</Version>
+        <Version>3.3.0</Version>
         <Authors>Pandatech</Authors>
         <PackageId>Pandatech.CommissionCalculator</PackageId>
         <Title>Pandatech.CommissionCalculator</Title>
         <PackageTags>Pandatech, library, calculator, commission, fee, bank, fintech</PackageTags>
         <Description>PandaTech.CommissionCalculator is a .NET library simplifying common fintech commission calculations.</Description>
         <RepositoryUrl>https://github.com/PandaTechAM/be-lib-commission-calculator.git</RepositoryUrl>
-        <PackageReleaseNotes>Validation changed with new overload.</PackageReleaseNotes>
+        <PackageReleaseNotes>Validation case fix</PackageReleaseNotes>
     </PropertyGroup>
     <ItemGroup>
         <None Include="..\..\pandatech.png" Pack="true" PackagePath="\"/>
