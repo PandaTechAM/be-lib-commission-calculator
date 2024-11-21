@@ -1,31 +1,41 @@
 - [1. Pandatech.CommissionCalculator](#1-pandatechcommissioncalculator)
-  - [1.1. Overview](#11-overview)
-  - [1.2. Features](#12-features)
-  - [1.3. Installation](#13-installation)
-  - [1.4. Usage](#14-usage)
-    - [1.4.1. Define Commission Rule](#141-define-commission-rule)
-    - [1.4.2. Compute Commission](#142-compute-commission)
-    - [1.4.3. Validation](#143-validation)
-    - [1.4.4. Validate DateTime Overlap](#144-validate-datetime-overlap)
-  - [1.5. CommissionRangeConfig Properties](#15-commissionrangeconfig-properties)
-  - [1.6. Conventions](#16-conventions)
-  - [1.7. Contributing](#17-contributing)
-  - [1.8. License](#18-license)
+    - [1.1. Overview](#11-overview)
+    - [1.2. Features](#12-features)
+    - [1.3. Installation](#13-installation)
+    - [1.4. Usage](#14-usage)
+        - [1.4.1. Define Commission Rule](#141-define-commission-rule)
+        - [1.4.2. Compute Commission](#142-compute-commission)
+        - [1.4.3. Validation](#143-validation)
+        - [1.4.4. Validate DateTime Overlap](#144-validate-datetime-overlap)
+    - [1.5. CommissionRangeConfig Properties](#15-commissionrangeconfig-properties)
+    - [1.6. Conventions](#16-conventions)
+    - [1.7. Contributing](#17-contributing)
+    - [1.8. License](#18-license)
 
 # 1. Pandatech.CommissionCalculator
 
 ## 1.1. Overview
 
-The updated Pandatech.CommissionCalculator is a comprehensive .NET library designed to streamline commission calculations. With enhanced features supporting both proportional and absolute commission types, the library now offers more granular control over commission calculations through detailed range configurations. The introduction of CalculationType in commission rules allows users to specify the nature of the commission calculation explicitly. Moreover, the library maintains its utility for date range overlap checks with improved efficiency, ensuring commission period validations remain precise and reliable.
+The updated Pandatech.CommissionCalculator is a comprehensive .NET library designed to streamline commission
+calculations. With enhanced features supporting both proportional and absolute commission types, the library now offers
+more granular control over commission calculations through detailed range configurations. The introduction of
+CalculationType in commission rules allows users to specify the nature of the commission calculation explicitly.
+Moreover, the library maintains its utility for date range overlap checks with improved efficiency, ensuring commission
+period validations remain precise and reliable.
 
 ## 1.2. Features
 
-- **Proportional and Absolute Commissions** - Enhanced support for both proportional and absolute commission calculations, providing extensive flexibility in defining commission structures.
-- **Detailed Commission Range Configurations** - Define commission calculations with precision using `CommissionRangeConfigs`, allowing for intricate rule definitions.
+- **Proportional and Absolute Commissions** - Enhanced support for both proportional and absolute commission
+  calculations, providing extensive flexibility in defining commission structures.
+- **Detailed Commission Range Configurations** - Define commission calculations with precision using
+  `CommissionRangeConfigs`, allowing for intricate rule definitions.
 - **Rule-Based Tiering** - Define custom rules for various range tiers.
-- **Auto-Validation** - Improved validation mechanisms ensure that commission rules are logically consistent and well-structured before computation.
-- **Strict Rule Coverage** - Guarantees complete domain coverage from 0 to +∞, with validation checks to ensure no gaps or overlaps in commission ranges.
-- **Configurable** - The library is highly configurable, allowing you to define your own commission ranges and commission types.
+- **Auto-Validation** - Improved validation mechanisms ensure that commission rules are logically consistent and
+  well-structured before computation.
+- **Strict Rule Coverage** - Guarantees complete domain coverage from 0 to +∞, with validation checks to ensure no gaps
+  or overlaps in commission ranges.
+- **Configurable** - The library is highly configurable, allowing you to define your own commission ranges and
+  commission types.
 - **Robust Testing** - Achieves 99% code coverage, ensuring reliability.
 - **Optimized Performance** - Delivers high performance, capable of over 1.5 million calculations per second.
 
