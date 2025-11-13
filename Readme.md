@@ -1,17 +1,3 @@
-- [1. Pandatech.CommissionCalculator](#1-pandatechcommissioncalculator)
-    - [1.1. Overview](#11-overview)
-    - [1.2. Features](#12-features)
-    - [1.3. Installation](#13-installation)
-    - [1.4. Usage](#14-usage)
-        - [1.4.1. Define Commission Rule](#141-define-commission-rule)
-        - [1.4.2. Compute Commission](#142-compute-commission)
-        - [1.4.3. Validation](#143-validation)
-        - [1.4.4. Validate DateTime Overlap](#144-validate-datetime-overlap)
-    - [1.5. CommissionRangeConfig Properties](#15-commissionrangeconfig-properties)
-    - [1.6. Conventions](#16-conventions)
-    - [1.7. Contributing](#17-contributing)
-    - [1.8. License](#18-license)
-
 # 1. Pandatech.CommissionCalculator
 
 ## 1.1. Overview
@@ -102,10 +88,30 @@ var rules = new CommissionRule
 
 ### 1.4.2. Compute Commission
 
+A) Standard (principal selects and applies)
+
 ```csharp
 decimal principalAmount = 1000m;
 decimal commission = Commission.ComputeCommission(principalAmount, rule);
 ```
+
+B) Selector-based (selector selects, principal applies)
+
+Use when the value that determines the rule (e.g., ticket count) is not the amount you apply the commission to (e.g.,
+order price).
+
+```csharp
+decimal orderPrice = 2000m;
+decimal ticketCount = 3m; // selector
+decimal commission = Commission.ComputeCommission(orderPrice, ticketCount, rule);
+```
+
+> **Notes**
+> - The selector-based overload works with `CalculationType.Absolute`.
+> - If used with `CalculationType.Proportional`, an `InvalidOperationException` is thrown.
+> - `MinCommission/MaxCommission` are taken from the selected range (by selector) and enforced on the commission
+    computed from the principal.
+> - `FlatRate` returns the flat amount (min/max ignored).
 
 ### 1.4.3. Validation
 

@@ -34,6 +34,30 @@ public static class Commission
          principalAmount);
    }
 
+   public static decimal ComputeCommission(decimal principalAmount, decimal selectorValue, CommissionRule rule)
+   {
+      if (rule.CalculationType == CalculationType.Proportional)
+      {
+         throw new InvalidOperationException(
+            "Selector-based overload is incompatible with Proportional rules. Use Absolute.");
+      }
+
+      var converted = ConvertCommissionRanges(rule);
+
+      var range = converted.CommissionRangeConfigs.FirstOrDefault(r =>
+         selectorValue >= r.RangeStart && selectorValue < r.RangeEnd);
+
+      var commission = ComputeRangeCommission(
+         range!.Type,
+         range.CommissionAmount,
+         range.MinCommission,
+         range.MaxCommission,
+         principalAmount
+      );
+
+      return Math.Round(commission, converted.DecimalPlace);
+   }
+
    private static decimal CalculateProportionalCommission(decimal principalAmount, CommissionRule rule)
    {
       rule = ConvertCommissionRanges(rule);
@@ -41,9 +65,8 @@ public static class Commission
       decimal commission = 0;
 
 
-      for (var index = 0; index < rule.CommissionRangeConfigs.Count; index++)
+      foreach (var range in rule.CommissionRangeConfigs)
       {
-         var range = rule.CommissionRangeConfigs[index];
          if (principalAmount >= range.RangeStart && principalAmount < range.RangeEnd)
          {
             var portionOfPrincipal = principalAmount - range.RangeStart;
@@ -125,8 +148,8 @@ public static class Commission
          throw new ArgumentException("The ranges list cannot be null or empty.");
       }
 
-      if (rule.CommissionRangeConfigs.Any(
-             r => r is { Type: CommissionType.Percentage, CommissionAmount: < -10 or > 10 }))
+      if (rule.CommissionRangeConfigs.Any(r =>
+             r is { Type: CommissionType.Percentage, CommissionAmount: < -10 or > 10 }))
       {
          throw new InvalidOperationException(
             "For 'Percentage' CommissionType, the CommissionAmount should be between -10 and 10. Commissions over 1000% are not allowed.");
