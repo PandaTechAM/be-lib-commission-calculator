@@ -23,7 +23,8 @@ period validations remain precise and reliable.
 - **Configurable** - The library is highly configurable, allowing you to define your own commission ranges and
   commission types.
 - **Robust Testing** - Achieves 99% code coverage, ensuring reliability.
-- **Optimized Performance** - Delivers high performance, capable of over 1.5 million calculations per second.
+- **Optimized Performance** - Delivers high performance, capable of over 5 million calculations per second with 0 ram
+  allocation.
 
 ## 1.3. Installation
 
