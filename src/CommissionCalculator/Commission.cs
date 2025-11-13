@@ -1,145 +1,79 @@
 ﻿using CommissionCalculator.DTO;
+using CommissionCalculator.Internal;
+using static CommissionCalculator.Internal.FastPath;
 
 namespace CommissionCalculator;
 
 public static class Commission
 {
-   private const decimal DecimalEpsilon = 1e-28M; //smallest decimal value that is greater than zero
-
+   // Principal-based
    public static decimal ComputeCommission(decimal principalAmount, CommissionRule rule)
    {
-      decimal commission;
+      var nr = CommissionRuleCache.Get(rule);
 
-      if (rule.CalculationType == CalculationType.Proportional)
-      {
-         commission = CalculateProportionalCommission(principalAmount, rule);
-         return Math.Round(commission, rule.DecimalPlace);
-      }
+      var commission = nr.CalcType == CalculationType.Proportional
+         ? CalculateProportional(principalAmount, nr)
+         : CalculateAbsolute(principalAmount, nr);
 
-      commission = CalculateAbsoluteCommission(principalAmount, rule);
-      return Math.Round(commission, rule.DecimalPlace);
+      return Math.Round(commission, nr.DecimalPlaces);
    }
 
-   private static decimal CalculateAbsoluteCommission(decimal principalAmount, CommissionRule rule)
-   {
-      rule = ConvertCommissionRanges(rule);
-
-      var range = rule.CommissionRangeConfigs.FirstOrDefault(r =>
-         principalAmount >= r.RangeStart && principalAmount < r.RangeEnd);
-
-      return ComputeRangeCommission(range!.Type,
-         range.CommissionAmount,
-         range.MinCommission,
-         range.MaxCommission,
-         principalAmount);
-   }
-
+   // Selector-based (selector chooses range; commission is applied to principal)
    public static decimal ComputeCommission(decimal principalAmount, decimal selectorValue, CommissionRule rule)
    {
-      if (rule.CalculationType == CalculationType.Proportional)
+      var nr = CommissionRuleCache.Get(rule);
+      if (nr.CalcType == CalculationType.Proportional)
       {
          throw new InvalidOperationException(
             "Selector-based overload is incompatible with Proportional rules. Use Absolute.");
       }
 
-      var converted = ConvertCommissionRanges(rule);
+      var idx = FindRangeIndex(nr, selectorValue);
+      var r = nr.Ranges[idx];
 
-      var range = converted.CommissionRangeConfigs.FirstOrDefault(r =>
-         selectorValue >= r.RangeStart && selectorValue < r.RangeEnd);
-
-      var commission = ComputeRangeCommission(
-         range!.Type,
-         range.CommissionAmount,
-         range.MinCommission,
-         range.MaxCommission,
-         principalAmount
-      );
-
-      return Math.Round(commission, converted.DecimalPlace);
+      var commission = ComputeRangeCommission(r.Type, r.Amount, r.Min, r.Max, principalAmount);
+      return Math.Round(commission, nr.DecimalPlaces);
    }
 
-   private static decimal CalculateProportionalCommission(decimal principalAmount, CommissionRule rule)
+   // ===== Fast paths using normalized rules =====
+
+   private static decimal CalculateAbsolute(decimal principalAmount, NormalizedCommissionRule nr)
    {
-      rule = ConvertCommissionRanges(rule);
-
-      decimal commission = 0;
-
-
-      foreach (var range in rule.CommissionRangeConfigs)
-      {
-         if (principalAmount >= range.RangeStart && principalAmount < range.RangeEnd)
-         {
-            var portionOfPrincipal = principalAmount - range.RangeStart;
-
-            commission += ComputeRangeCommission(range.Type,
-               range.CommissionAmount,
-               range.MinCommission,
-               range.MaxCommission,
-               portionOfPrincipal);
-         }
-
-         if (principalAmount < range.RangeEnd)
-         {
-            continue;
-         }
-
-         {
-            var portionOfPrincipal = range.RangeEnd - range.RangeStart - DecimalEpsilon;
-
-            commission += ComputeRangeCommission(range.Type,
-               range.CommissionAmount,
-               range.MinCommission,
-               range.MaxCommission,
-               portionOfPrincipal);
-         }
-      }
-
-      return commission;
+      var idx = FindRangeIndex(nr, principalAmount);
+      var r = nr.Ranges[idx];
+      return ComputeRangeCommission(r.Type, r.Amount, r.Min, r.Max, principalAmount);
    }
 
-   private static decimal ComputeRangeCommission(CommissionType commissionType,
-      decimal commission,
-      decimal minimum,
-      decimal maximum,
-      decimal principalAmount)
+   private static decimal CalculateProportional(decimal principalAmount, NormalizedCommissionRule nr)
    {
-      if (commissionType == CommissionType.FlatRate)
-      {
-         return commission;
-      }
+      // Find the current tier
+      var idx = FindRangeIndex(nr, principalAmount);
+      var r = nr.Ranges[idx];
 
-      var computedCommission = principalAmount * commission;
-      if (computedCommission < minimum)
-      {
-         return minimum;
-      }
+      // Sum of fully completed prior tiers
+      var sum = nr.ProportionalPrefix.Length == 0 ? 0 : nr.ProportionalPrefix[idx];
 
-      return computedCommission > maximum ? maximum : computedCommission;
+      // Partial of the current tier
+      var portion = principalAmount - r.Start;
+      sum += ComputeRangeCommission(r.Type, r.Amount, r.Min, r.Max, portion);
+
+      return sum;
    }
 
-   private static CommissionRule ConvertCommissionRanges(CommissionRule rule)
+   // ===== Validation (public contract) =====
+
+   public static bool ValidateRule(CommissionRule rule)
    {
-      ValidateCommissionRule(rule);
-
-      var convertedRanges = rule.CommissionRangeConfigs
-                                .Select(c => new CommissionRangeConfigs
-                                {
-                                   RangeStart = c.RangeStart,
-                                   RangeEnd = c.RangeEnd == 0 ? decimal.MaxValue : c.RangeEnd,
-                                   Type = c.Type,
-                                   CommissionAmount = c.CommissionAmount,
-                                   MinCommission = c.MinCommission,
-                                   MaxCommission = c.MaxCommission == 0 ? decimal.MaxValue : c.MaxCommission
-                                })
-                                .ToList();
-      return new CommissionRule
+      try
       {
-         CalculationType = rule.CalculationType,
-         DecimalPlace = rule.DecimalPlace,
-         CommissionRangeConfigs = convertedRanges
-      };
+         ValidateCommissionRule(rule);
+         return true;
+      }
+      catch
+      {
+         return false;
+      }
    }
-
 
    private static void ValidateCommissionRule(CommissionRule rule)
    {
@@ -157,21 +91,21 @@ public static class Commission
 
       if (rule.CommissionRangeConfigs.Count == 1)
       {
-         if (rule.CommissionRangeConfigs[0].RangeStart != 0 || rule.CommissionRangeConfigs[0].RangeEnd != 0)
+         var only = rule.CommissionRangeConfigs[0];
+         if (only.RangeStart != 0 || only.RangeEnd != 0)
          {
             throw new InvalidOperationException("In case of one range, both 'From' and 'To' should be 0.");
          }
 
-         if (rule.CommissionRangeConfigs[0].MaxCommission != 0 && rule.CommissionRangeConfigs[0].MaxCommission <
-             rule.CommissionRangeConfigs[0].MinCommission)
+         if (only.MaxCommission != 0 && only.MaxCommission < only.MinCommission)
          {
             throw new InvalidOperationException("MaxCommission should be greater than or equal to MinCommission.");
          }
+
+         return;
       }
-      else
-      {
-         ValidateEachRange(rule);
-      }
+
+      ValidateEachRange(rule);
    }
 
    private static void ValidateEachRange(CommissionRule rule)
@@ -188,7 +122,6 @@ public static class Commission
       }
 
       var verifiedRules = 1;
-
       var lastTo = startRule.RangeEnd;
 
       while (true)
@@ -215,26 +148,12 @@ public static class Commission
          }
 
          verifiedRules++;
-
          lastTo = nextRule!.RangeEnd;
       }
 
       if (verifiedRules != rule.CommissionRangeConfigs.Count)
       {
          throw new InvalidOperationException("There is some nested or gap ranges in the rules.");
-      }
-   }
-
-   public static bool ValidateRule(CommissionRule rule)
-   {
-      try
-      {
-         ValidateCommissionRule(rule);
-         return true;
-      }
-      catch (Exception)
-      {
-         return false;
       }
    }
 }

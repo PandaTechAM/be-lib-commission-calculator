@@ -6,9 +6,9 @@ using CommissionCalculator.Benchmark;
 
 var job = Job.Default
              .WithRuntime(CoreRuntime.Core90)
-             .WithWarmupCount(3)
-             .WithIterationCount(10)
-             .WithLaunchCount(1);
+             .WithLaunchCount(1)
+             .WithWarmupCount(1)
+             .WithIterationCount(6);
 
 var config = DefaultConfig.Instance.AddJob(job);
-BenchmarkRunner.Run<CommissionBench>(config);
+BenchmarkRunner.Run<UnifiedBench>(config);

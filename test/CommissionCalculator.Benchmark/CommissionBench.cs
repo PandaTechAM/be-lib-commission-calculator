@@ -4,30 +4,25 @@ using CommissionCalculator.DTO;
 namespace CommissionCalculator.Benchmark;
 
 [MemoryDiagnoser]
-public class CommissionBench
+public class UnifiedBench
 {
-   private CommissionRule _proportionalRule = null!;
-   private CommissionRule _absoluteRule = null!;
-   private decimal _principal;
-   private decimal _selector;
+   // keep the param space tiny (fast + comparable rows)
+   public static IEnumerable<decimal> Principals => [2_000m]; // fixed
+   public static IEnumerable<decimal> Selectors => [1.5m, 3m, 5m]; // one per selector range
 
-   // Sources for decimal params
-   public static IEnumerable<decimal> PrincipalValues => [755_789m, 1_000m, 25_000m];
-   public static IEnumerable<decimal> SelectorValues => [1m, 3m, 5m, 10m];
+   [ParamsSource(nameof(Principals))]
+   public decimal Principal { get; set; }
 
-   [ParamsSource(nameof(PrincipalValues))]
-   public decimal PrincipalParam { get; set; }
+   [ParamsSource(nameof(Selectors))]
+   public decimal Selector { get; set; }
 
-   [ParamsSource(nameof(SelectorValues))]
-   public decimal SelectorParam { get; set; }
+   private CommissionRule _propRule = null!;
+   private CommissionRule _absRule = null!;
 
    [GlobalSetup]
    public void Setup()
    {
-      _principal = PrincipalParam;
-      _selector = SelectorParam;
-
-      _proportionalRule = new CommissionRule
+      _propRule = new CommissionRule
       {
          CalculationType = CalculationType.Proportional,
          DecimalPlace = 0,
@@ -72,7 +67,7 @@ public class CommissionBench
          ]
       };
 
-      _absoluteRule = new CommissionRule
+      _absRule = new CommissionRule
       {
          CalculationType = CalculationType.Absolute,
          DecimalPlace = 0,
@@ -110,11 +105,11 @@ public class CommissionBench
    }
 
    [Benchmark(Baseline = true)]
-   public decimal Proportional_PrincipalBased() => Commission.ComputeCommission(_principal, _proportionalRule);
+   public decimal Proportional_PrincipalBased() => Commission.ComputeCommission(Principal, _propRule);
 
    [Benchmark]
-   public decimal Absolute_PrincipalBased() => Commission.ComputeCommission(_principal, _absoluteRule);
+   public decimal Absolute_PrincipalBased() => Commission.ComputeCommission(Principal, _absRule);
 
    [Benchmark]
-   public decimal Absolute_SelectorBased() => Commission.ComputeCommission(_principal, _selector, _absoluteRule);
+   public decimal Absolute_SelectorBased() => Commission.ComputeCommission(Principal, Selector, _absRule);
 }

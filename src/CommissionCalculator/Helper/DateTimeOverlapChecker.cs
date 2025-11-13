@@ -6,18 +6,7 @@ public static class DateTimeOverlapChecker
 {
    public static bool HasOverlap(List<DateTimePair> firstPairs, List<DateTimePair> secondPairs)
    {
-      foreach (var firstPair in firstPairs)
-      {
-         foreach (var secondPair in secondPairs)
-         {
-            if (IsOverlapping(firstPair, secondPair))
-            {
-               return true;
-            }
-         }
-      }
-
-      return false;
+      return firstPairs.Any(firstPair => secondPairs.Any(secondPair => IsOverlapping(firstPair, secondPair)));
    }
 
    private static bool IsOverlapping(DateTimePair firstPair, DateTimePair secondPair)
