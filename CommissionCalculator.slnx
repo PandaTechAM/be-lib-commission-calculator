@@ -1,0 +1,16 @@
+<Solution>
+  <Folder Name="/Solution Items/">
+    <File Path=".editorconfig" />
+    <File Path=".github/workflows/main.yml" />
+    <File Path=".gitignore" />
+    <File Path="global.json" />
+    <File Path="Readme.md" />
+  </Folder>
+  <Folder Name="/src/">
+    <Project Path="src/CommissionCalculator/CommissionCalculator.csproj" />
+  </Folder>
+  <Folder Name="/test/">
+    <Project Path="test/CommissionCalculator.Benchmark/CommissionCalculator.Benchmark.csproj" />
+    <Project Path="test/CommissionCalculator.Tests/CommissionCalculator.Tests.csproj" />
+  </Folder>
+</Solution>
