@@ -7,14 +7,14 @@
         <PackageIcon>pandatech.png</PackageIcon>
         <PackageReadmeFile>Readme.md</PackageReadmeFile>
         <Copyright>MIT</Copyright>
-        <Version>5.0.0</Version>
+        <Version>5.0.1</Version>
         <Authors>Pandatech</Authors>
         <PackageId>Pandatech.CommissionCalculator</PackageId>
         <Title>Pandatech.CommissionCalculator</Title>
         <PackageTags>Pandatech, library, calculator, commission, fee, bank, fintech</PackageTags>
         <Description>PandaTech.CommissionCalculator is a .NET library simplifying common fintech commission calculations.</Description>
         <RepositoryUrl>https://github.com/PandaTechAM/be-lib-commission-calculator.git</RepositoryUrl>
-        <PackageReleaseNotes>Dotnet 10 update</PackageReleaseNotes>
+        <PackageReleaseNotes>Nuget updates</PackageReleaseNotes>
 
         <!-- Never run analyzers as part of compilation (local, CI, dotnet build/test/publish) -->
         <RunAnalyzersDuringBuild>false</RunAnalyzersDuringBuild>
@@ -31,8 +31,8 @@
     </ItemGroup>
 
     <ItemGroup>
-        <PackageReference Include="Pandatech.Analyzers" Version="1.6.0"/>
-        <PackageReference Include="SonarAnalyzer.CSharp" Version="10.17.0.131074">
+        <PackageReference Include="Pandatech.Analyzers" Version="2.1.0" />
+        <PackageReference Include="SonarAnalyzer.CSharp" Version="10.18.0.131500">
             <PrivateAssets>all</PrivateAssets>
             <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
         </PackageReference>
