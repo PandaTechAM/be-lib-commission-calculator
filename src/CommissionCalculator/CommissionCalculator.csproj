@@ -1,40 +1,58 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
     <PropertyGroup>
-        <TargetFramework>net10.0</TargetFramework>
-        <ImplicitUsings>enable</ImplicitUsings>
+        <TargetFrameworks>net8.0;net9.0;net10.0</TargetFrameworks>
         <Nullable>enable</Nullable>
-        <PackageIcon>pandatech.png</PackageIcon>
-        <PackageReadmeFile>Readme.md</PackageReadmeFile>
-        <Copyright>MIT</Copyright>
-        <Version>5.0.1</Version>
-        <Authors>Pandatech</Authors>
+        <ImplicitUsings>enable</ImplicitUsings>
+
+        <IsPackable>true</IsPackable>
+
         <PackageId>Pandatech.CommissionCalculator</PackageId>
-        <Title>Pandatech.CommissionCalculator</Title>
-        <PackageTags>Pandatech, library, calculator, commission, fee, bank, fintech</PackageTags>
-        <Description>PandaTech.CommissionCalculator is a .NET library simplifying common fintech commission calculations.</Description>
-        <RepositoryUrl>https://github.com/PandaTechAM/be-lib-commission-calculator.git</RepositoryUrl>
-        <PackageReleaseNotes>Nuget updates</PackageReleaseNotes>
+        <Authors>Pandatech</Authors>
+        <Description>High-performance commission calculation engine supporting proportional and absolute commission models with tiered ranges, min/max constraints, automatic validation, binary search optimization, and ConditionalWeakTable caching. Zero allocation after initial normalization, 5M+ calculations/sec. Ideal for payment processing, affiliate marketing, broker fees.</Description>
+        <PackageTags>commission;calculation;tiered-pricing;percentage;flat-rate;payment-processing;affiliate;broker-fees;performance;zero-allocation;finance;pricing</PackageTags>
 
-        <!-- Never run analyzers as part of compilation (local, CI, dotnet build/test/publish) -->
+        <PackageLicenseExpression>MIT</PackageLicenseExpression>
+        <RepositoryType>git</RepositoryType>
+        <RepositoryUrl>https://github.com/PandaTechAM/be-lib-commission-calculator</RepositoryUrl>
+        <PackageProjectUrl>https://github.com/PandaTechAM/be-lib-commission-calculator</PackageProjectUrl>
+        <PublishRepositoryUrl>true</PublishRepositoryUrl>
+
+        <PackageIcon>pandatech.png</PackageIcon>
+        <PackageReadmeFile>README.md</PackageReadmeFile>
+
+        <Version>6.0.0</Version>
+        <PackageReleaseNotes>Multi-target net8.0/9.0/10.0, improved documentation, enhanced README with examples</PackageReleaseNotes>
+
+        <!-- Build quality -->
+        <TreatWarningsAsErrors>false</TreatWarningsAsErrors>
+        <GenerateDocumentationFile>true</GenerateDocumentationFile>
+
+        <!-- Source/symbols -->
+        <IncludeSymbols>true</IncludeSymbols>
+        <SymbolPackageFormat>snupkg</SymbolPackageFormat>
+        <ContinuousIntegrationBuild Condition="'$(CI)' == 'true'">true</ContinuousIntegrationBuild>
+
+        <!-- Analyzer behavior -->
         <RunAnalyzersDuringBuild>false</RunAnalyzersDuringBuild>
-
-        <!-- Keep background/live analysis in the IDE -->
         <RunAnalyzersDuringLiveAnalysis>true</RunAnalyzersDuringLiveAnalysis>
-
-        <!-- Optional: ensure code-style analyzers don't run during build either -->
         <EnforceCodeStyleInBuild>false</EnforceCodeStyleInBuild>
     </PropertyGroup>
-    <ItemGroup>
-        <None Include="..\..\pandatech.png" Pack="true" PackagePath="\"/>
-        <None Include="..\..\Readme.md" Pack="true" PackagePath="\"/>
-    </ItemGroup>
 
     <ItemGroup>
-        <PackageReference Include="Pandatech.Analyzers" Version="2.1.0" />
-        <PackageReference Include="SonarAnalyzer.CSharp" Version="10.18.0.131500">
+        <None Include="..\..\pandatech.png" Pack="true" PackagePath="\"/>
+        <None Include="..\..\README.md" Pack="true" PackagePath="\"/>
+    </ItemGroup>
+
+    <!-- No external dependencies - pure calculation library -->
+
+    <!-- Analyzers (all frameworks) -->
+    <ItemGroup>
+        <PackageReference Include="Pandatech.Analyzers" Version="[2.1.0]" PrivateAssets="all"/>
+        <PackageReference Include="SonarAnalyzer.CSharp" Version="[10.19.0.132793]">
             <PrivateAssets>all</PrivateAssets>
             <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
         </PackageReference>
     </ItemGroup>
+
 </Project>
