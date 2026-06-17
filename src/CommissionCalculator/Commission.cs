@@ -15,7 +15,7 @@ public static class Commission
          ? CalculateProportional(principalAmount, nr)
          : CalculateAbsolute(principalAmount, nr);
 
-      return Math.Round(commission, nr.DecimalPlaces);
+      return Math.Round(commission, nr.DecimalPlaces, MidpointRounding.AwayFromZero);
    }
 
    // Selector-based (selector chooses range; commission is applied to principal)
@@ -32,7 +32,7 @@ public static class Commission
       var r = nr.Ranges[idx];
 
       var commission = ComputeRangeCommission(r.Type, r.Amount, r.Min, r.Max, principalAmount);
-      return Math.Round(commission, nr.DecimalPlaces);
+      return Math.Round(commission, nr.DecimalPlaces, MidpointRounding.AwayFromZero);
    }
 
    // ===== Fast paths using normalized rules =====
