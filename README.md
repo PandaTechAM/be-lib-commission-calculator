@@ -1,6 +1,7 @@
 # Pandatech.CommissionCalculator
 
-High-performance commission calculation engine for .NET 8+ supporting proportional and absolute commission models with tiered ranges, min/max constraints, and automatic validation.
+High-performance commission calculation engine for .NET 8+ supporting proportional and absolute commission models with
+tiered ranges, min/max constraints, and automatic validation.
 
 ## Installation
 
@@ -81,7 +82,8 @@ decimal ticketCount = 3m;       // Value to select the range
 decimal commission = Commission.ComputeCommission(orderPrice, ticketCount, rule);
 ```
 
-**Use case:** When the value that determines which range to use (e.g., ticket quantity) differs from the amount you calculate commission on (e.g., order total).
+**Use case:** When the value that determines which range to use (e.g., ticket quantity) differs from the amount you
+calculate commission on (e.g., order total).
 
 ## Calculation Types
 
@@ -128,14 +130,14 @@ var absolute = new CommissionRule
 
 ### CommissionRangeConfigs Properties
 
-| Property | Type | Description |
-|----------|------|-------------|
-| `RangeStart` | decimal | Start of range (inclusive) |
-| `RangeEnd` | decimal | End of range (exclusive), **0 = infinity** |
-| `Type` | CommissionType | `FlatRate` or `Percentage` |
-| `CommissionAmount` | decimal | Commission value (flat amount or percentage like 0.1 for 10%) |
-| `MinCommission` | decimal | Minimum commission for this range |
-| `MaxCommission` | decimal | Maximum commission for this range, **0 = infinity** |
+| Property           | Type           | Description                                                   |
+|--------------------|----------------|---------------------------------------------------------------|
+| `RangeStart`       | decimal        | Start of range (inclusive)                                    |
+| `RangeEnd`         | decimal        | End of range (exclusive), **0 = infinity**                    |
+| `Type`             | CommissionType | `FlatRate` or `Percentage`                                    |
+| `CommissionAmount` | decimal        | Commission value (flat amount or percentage like 0.1 for 10%) |
+| `MinCommission`    | decimal        | Minimum commission for this range                             |
+| `MaxCommission`    | decimal        | Maximum commission for this range, **0 = infinity**           |
 
 ### CommissionType
 
@@ -174,12 +176,14 @@ bool isValid = Commission.ValidateRule(rule);
 ### Validation Rules
 
 ✅ **Required:**
+
 - At least one range starting at 0
 - Ranges must be contiguous (no gaps)
 - Ranges must cover [0, ∞)
 - `MaxCommission ≥ MinCommission` (when MaxCommission ≠ 0)
 
 ❌ **Forbidden:**
+
 - Overlapping ranges
 - Gaps in coverage
 - Equal `RangeStart` and `RangeEnd` (except single range: both 0)
@@ -216,6 +220,7 @@ bool hasOverlap = DateTimeOverlapChecker.HasOverlap(period1, period2);
 - **ConditionalWeakTable** caching of normalized rules
 
 **Performance characteristics:**
+
 ```
 First calculation: ~50μs (validation + normalization + computation)
 Subsequent calculations: ~200ns (cache hit + binary search + math)

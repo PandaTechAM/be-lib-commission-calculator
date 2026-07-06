@@ -4,156 +4,168 @@ using static CommissionCalculator.Internal.FastPath;
 
 namespace CommissionCalculator;
 
+/// <summary>
+///     Computes tiered commissions using absolute or proportional models, with binary-search range lookup and cached rule
+///     normalization.
+/// </summary>
 public static class Commission
 {
-   // Principal-based
-   public static decimal ComputeCommission(decimal principalAmount, CommissionRule rule)
-   {
-      var nr = CommissionRuleCache.Get(rule);
+    /// <summary>
+    ///     Compute the commission for a principal amount using the tier that contains it.
+    /// </summary>
+    public static decimal ComputeCommission(decimal principalAmount, CommissionRule rule)
+    {
+        var nr = CommissionRuleCache.Get(rule);
 
-      var commission = nr.CalcType == CalculationType.Proportional
-         ? CalculateProportional(principalAmount, nr)
-         : CalculateAbsolute(principalAmount, nr);
+        var commission = nr._calcType == CalculationType.Proportional
+            ? CalculateProportional(principalAmount, nr)
+            : CalculateAbsolute(principalAmount, nr);
 
-      return Math.Round(commission, nr.DecimalPlaces, MidpointRounding.AwayFromZero);
-   }
+        return Math.Round(commission, nr._decimalPlaces, MidpointRounding.AwayFromZero);
+    }
 
-   // Selector-based (selector chooses range; commission is applied to principal)
-   public static decimal ComputeCommission(decimal principalAmount, decimal selectorValue, CommissionRule rule)
-   {
-      var nr = CommissionRuleCache.Get(rule);
-      if (nr.CalcType == CalculationType.Proportional)
-      {
-         throw new InvalidOperationException(
-            "Selector-based overload is incompatible with Proportional rules. Use Absolute.");
-      }
+    /// <summary>
+    ///     Compute an absolute commission where the selector value chooses the range and the commission is applied to the
+    ///     principal amount. Throws for Proportional rules.
+    /// </summary>
+    public static decimal ComputeCommission(decimal principalAmount, decimal selectorValue, CommissionRule rule)
+    {
+        var nr = CommissionRuleCache.Get(rule);
+        if (nr._calcType == CalculationType.Proportional)
+        {
+            throw new InvalidOperationException(
+                "Selector-based overload is incompatible with Proportional rules. Use Absolute.");
+        }
 
-      var idx = FindRangeIndex(nr, selectorValue);
-      var r = nr.Ranges[idx];
+        var idx = FindRangeIndex(nr, selectorValue);
+        var r = nr._ranges[idx];
 
-      var commission = ComputeRangeCommission(r.Type, r.Amount, r.Min, r.Max, principalAmount);
-      return Math.Round(commission, nr.DecimalPlaces, MidpointRounding.AwayFromZero);
-   }
+        var commission = ComputeRangeCommission(r.Type, r.Amount, r.Min, r.Max, principalAmount);
+        return Math.Round(commission, nr._decimalPlaces, MidpointRounding.AwayFromZero);
+    }
 
-   // ===== Fast paths using normalized rules =====
+    // ===== Fast paths using normalized rules =====
 
-   private static decimal CalculateAbsolute(decimal principalAmount, NormalizedCommissionRule nr)
-   {
-      var idx = FindRangeIndex(nr, principalAmount);
-      var r = nr.Ranges[idx];
-      return ComputeRangeCommission(r.Type, r.Amount, r.Min, r.Max, principalAmount);
-   }
+    private static decimal CalculateAbsolute(decimal principalAmount, NormalizedCommissionRule nr)
+    {
+        var idx = FindRangeIndex(nr, principalAmount);
+        var r = nr._ranges[idx];
+        return ComputeRangeCommission(r.Type, r.Amount, r.Min, r.Max, principalAmount);
+    }
 
-   private static decimal CalculateProportional(decimal principalAmount, NormalizedCommissionRule nr)
-   {
-      // Find the current tier
-      var idx = FindRangeIndex(nr, principalAmount);
-      var r = nr.Ranges[idx];
+    private static decimal CalculateProportional(decimal principalAmount, NormalizedCommissionRule nr)
+    {
+        // Find the current tier
+        var idx = FindRangeIndex(nr, principalAmount);
+        var r = nr._ranges[idx];
 
-      // Sum of fully completed prior tiers
-      var sum = nr.ProportionalPrefix.Length == 0 ? 0 : nr.ProportionalPrefix[idx];
+        // Sum of fully completed prior tiers
+        var sum = nr._proportionalPrefix.Length == 0 ? 0 : nr._proportionalPrefix[idx];
 
-      // Partial of the current tier
-      var portion = principalAmount - r.Start;
-      sum += ComputeRangeCommission(r.Type, r.Amount, r.Min, r.Max, portion);
+        // Partial of the current tier
+        var portion = principalAmount - r.Start;
+        sum += ComputeRangeCommission(r.Type, r.Amount, r.Min, r.Max, portion);
 
-      return sum;
-   }
+        return sum;
+    }
 
-   // ===== Validation (public contract) =====
+    // ===== Validation (public contract) =====
 
-   public static bool ValidateRule(CommissionRule rule)
-   {
-      try
-      {
-         ValidateCommissionRule(rule);
-         return true;
-      }
-      catch
-      {
-         return false;
-      }
-   }
+    /// <summary>
+    ///     Validate a commission rule; returns false instead of throwing when the rule is malformed.
+    /// </summary>
+    public static bool ValidateRule(CommissionRule rule)
+    {
+        try
+        {
+            ValidateCommissionRule(rule);
+            return true;
+        }
+        catch
+        {
+            return false;
+        }
+    }
 
-   private static void ValidateCommissionRule(CommissionRule rule)
-   {
-      if (rule == null || rule.CommissionRangeConfigs.Count == 0)
-      {
-         throw new ArgumentException("The ranges list cannot be null or empty.");
-      }
+    private static void ValidateCommissionRule(CommissionRule rule)
+    {
+        if (rule == null || rule.CommissionRangeConfigs.Count == 0)
+        {
+            throw new ArgumentException("The ranges list cannot be null or empty.");
+        }
 
-      if (rule.CommissionRangeConfigs.Any(r =>
-             r is { Type: CommissionType.Percentage, CommissionAmount: < -10 or > 10 }))
-      {
-         throw new InvalidOperationException(
-            "For 'Percentage' CommissionType, the CommissionAmount should be between -10 and 10. Commissions over 1000% are not allowed.");
-      }
+        if (rule.CommissionRangeConfigs.Any(r =>
+                r is { Type: CommissionType.Percentage, CommissionAmount: < -10 or > 10 }))
+        {
+            throw new InvalidOperationException(
+                "For 'Percentage' CommissionType, the CommissionAmount should be between -10 and 10. Commissions over 1000% are not allowed.");
+        }
 
-      if (rule.CommissionRangeConfigs.Count == 1)
-      {
-         var only = rule.CommissionRangeConfigs[0];
-         if (only.RangeStart != 0 || only.RangeEnd != 0)
-         {
-            throw new InvalidOperationException("In case of one range, both 'From' and 'To' should be 0.");
-         }
+        if (rule.CommissionRangeConfigs.Count == 1)
+        {
+            var only = rule.CommissionRangeConfigs[0];
+            if (only.RangeStart != 0 || only.RangeEnd != 0)
+            {
+                throw new InvalidOperationException("In case of one range, both 'From' and 'To' should be 0.");
+            }
 
-         if (only.MaxCommission != 0 && only.MaxCommission < only.MinCommission)
-         {
+            if (only.MaxCommission != 0 && only.MaxCommission < only.MinCommission)
+            {
+                throw new InvalidOperationException("MaxCommission should be greater than or equal to MinCommission.");
+            }
+
+            return;
+        }
+
+        ValidateEachRange(rule);
+    }
+
+    private static void ValidateEachRange(CommissionRule rule)
+    {
+        var startRule = rule.CommissionRangeConfigs.FirstOrDefault(r => r is { RangeStart: 0, RangeEnd: > 0 });
+        if (startRule == null)
+        {
+            throw new InvalidOperationException("There should be at least one rule where From = 0.");
+        }
+
+        if (startRule.MaxCommission != 0 && startRule.MaxCommission < startRule.MinCommission)
+        {
             throw new InvalidOperationException("MaxCommission should be greater than or equal to MinCommission.");
-         }
+        }
 
-         return;
-      }
+        var verifiedRules = 1;
+        var lastTo = startRule.RangeEnd;
 
-      ValidateEachRange(rule);
-   }
+        while (true)
+        {
+            var nextRule = rule.CommissionRangeConfigs.FirstOrDefault(r => r.RangeStart == lastTo);
+            if (nextRule is null && lastTo != 0)
+            {
+                throw new InvalidOperationException($"Gap detected. No rule found for 'From = {lastTo}'.");
+            }
 
-   private static void ValidateEachRange(CommissionRule rule)
-   {
-      var startRule = rule.CommissionRangeConfigs.FirstOrDefault(r => r is { RangeStart: 0, RangeEnd: > 0 });
-      if (startRule == null)
-      {
-         throw new InvalidOperationException("There should be at least one rule where From = 0.");
-      }
+            if (nextRule is not null && nextRule.RangeStart == nextRule.RangeEnd)
+            {
+                throw new InvalidOperationException("Invalid rule. 'From' and 'To' cannot be equal.");
+            }
 
-      if (startRule.MaxCommission != 0 && startRule.MaxCommission < startRule.MinCommission)
-      {
-         throw new InvalidOperationException("MaxCommission should be greater than or equal to MinCommission.");
-      }
+            if (nextRule is not null && nextRule.MaxCommission != 0 && nextRule.MaxCommission < nextRule.MinCommission)
+            {
+                throw new InvalidOperationException("MaxCommission should be greater than or equal to MinCommission.");
+            }
 
-      var verifiedRules = 1;
-      var lastTo = startRule.RangeEnd;
+            if (lastTo == 0)
+            {
+                break;
+            }
 
-      while (true)
-      {
-         var nextRule = rule.CommissionRangeConfigs.FirstOrDefault(r => r.RangeStart == lastTo);
-         if (nextRule is null && lastTo != 0)
-         {
-            throw new InvalidOperationException($"Gap detected. No rule found for 'From = {lastTo}'.");
-         }
+            verifiedRules++;
+            lastTo = nextRule!.RangeEnd;
+        }
 
-         if (nextRule is not null && nextRule.RangeStart == nextRule.RangeEnd)
-         {
-            throw new InvalidOperationException("Invalid rule. 'From' and 'To' cannot be equal.");
-         }
-
-         if (nextRule is not null && nextRule.MaxCommission != 0 && nextRule.MaxCommission < nextRule.MinCommission)
-         {
-            throw new InvalidOperationException("MaxCommission should be greater than or equal to MinCommission.");
-         }
-
-         if (lastTo == 0)
-         {
-            break;
-         }
-
-         verifiedRules++;
-         lastTo = nextRule!.RangeEnd;
-      }
-
-      if (verifiedRules != rule.CommissionRangeConfigs.Count)
-      {
-         throw new InvalidOperationException("There is some nested or gap ranges in the rules.");
-      }
-   }
+        if (verifiedRules != rule.CommissionRangeConfigs.Count)
+        {
+            throw new InvalidOperationException("There is some nested or gap ranges in the rules.");
+        }
+    }
 }
