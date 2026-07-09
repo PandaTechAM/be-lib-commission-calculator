@@ -21,8 +21,8 @@
     <PackageIcon>pandatech.png</PackageIcon>
     <PackageReadmeFile>README.md</PackageReadmeFile>
 
-    <Version>6.0.2</Version>
-    <PackageReleaseNotes>Tooling modernization: xUnit v3 test migration, dependency updates, XML docs, standardized editorconfig/gitignore/global.json.</PackageReleaseNotes>
+    <Version>6.0.3</Version>
+    <PackageReleaseNotes>Support negative DecimalPlace values for rounding to tens, hundreds, thousands, and larger powers of ten.</PackageReleaseNotes>
 
     <!-- Build quality -->
     <TreatWarningsAsErrors>false</TreatWarningsAsErrors>
