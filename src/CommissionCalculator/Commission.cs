@@ -21,7 +21,7 @@ public static class Commission
             ? CalculateProportional(principalAmount, nr)
             : CalculateAbsolute(principalAmount, nr);
 
-        return Math.Round(commission, nr._decimalPlaces, MidpointRounding.AwayFromZero);
+        return RoundCommission(commission, nr._decimalPlaces);
     }
 
     /// <summary>
@@ -41,7 +41,7 @@ public static class Commission
         var r = nr._ranges[idx];
 
         var commission = ComputeRangeCommission(r.Type, r.Amount, r.Min, r.Max, principalAmount);
-        return Math.Round(commission, nr._decimalPlaces, MidpointRounding.AwayFromZero);
+        return RoundCommission(commission, nr._decimalPlaces);
     }
 
     // ===== Fast paths using normalized rules =====
@@ -67,6 +67,30 @@ public static class Commission
         sum += ComputeRangeCommission(r.Type, r.Amount, r.Min, r.Max, portion);
 
         return sum;
+    }
+
+    private static decimal RoundCommission(decimal commission, short decimalPlaces)
+    {
+        if (decimalPlaces >= 0)
+        {
+            return Math.Round(commission, decimalPlaces, MidpointRounding.AwayFromZero);
+        }
+
+        var factor = Pow10(Math.Abs(decimalPlaces));
+
+        return Math.Round(commission / factor, 0, MidpointRounding.AwayFromZero) * factor;
+    }
+
+    private static decimal Pow10(int power)
+    {
+        var result = 1M;
+
+        for (var i = 0; i < power; i++)
+        {
+            result *= 10M;
+        }
+
+        return result;
     }
 
     // ===== Validation (public contract) =====
